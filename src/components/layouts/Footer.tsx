@@ -42,6 +42,14 @@ export function Footer() {
                   {isArabic ? "الصحة البشرية" : "Human Health"}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/library/history"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {isArabic ? "التاريخ" : "History"}
+                </Link>
+              </li>
             </ul>
           </div>
 

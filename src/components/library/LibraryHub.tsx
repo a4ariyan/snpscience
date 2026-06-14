@@ -4,7 +4,7 @@ import { Header } from "@/components/layouts/Header";
 import { Footer } from "@/components/layouts/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
-import { Dna, HeartPulse } from "lucide-react";
+import { Dna, HeartPulse, Clock } from "lucide-react";
 
 const categories = [
   {
@@ -22,6 +22,14 @@ const categories = [
     descriptionAr: "متغيرات خطر المرض وعلم الجينوم الدوائي وجينوم السرطان والتطبيقات السريرية لأبحاث SNP.",
     path: "/library/human-health",
     icon: HeartPulse,
+  },
+  {
+    title: "History",
+    titleAr: "التاريخ",
+    description: "Exploring genetic and evolutionary history through SNP data.",
+    descriptionAr: "استكشاف التاريخ الجيني والتطوري من خلال بيانات SNP.",
+    path: "/library/history",
+    icon: Clock,
   },
 ];
 
@@ -49,7 +57,7 @@ export function LibraryHub() {
 
         <section className="py-12">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {categories.map((cat) => {
                 const Icon = cat.icon;
                 return (

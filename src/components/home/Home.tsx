@@ -5,7 +5,7 @@ import Link from "next/link";
 import { MasterMenu } from "@/components/layouts/MasterMenu";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Search, Moon, Sun, Menu, X, Globe, Dna, HeartPulse, BookOpen, Monitor } from "lucide-react";
+import { Search, Moon, Sun, Menu, X, Globe, Dna, HeartPulse, BookOpen, Monitor, Clock } from "lucide-react";
 
 const heroImages = [
   "/images/aerial-1.jpg",
@@ -48,6 +48,14 @@ const librarySections = [
     descriptionAr: "خطر المرض وعلم الجينوم الدوائي وجينوم السرطان",
     path: "/library/human-health",
     icon: HeartPulse,
+  },
+  {
+    title: "History",
+    titleAr: "التاريخ",
+    description: "Genetic and evolutionary history through SNP data",
+    descriptionAr: "التاريخ الجيني والتطوري من خلال بيانات SNP",
+    path: "/library/history",
+    icon: Clock,
   },
 ];
 
@@ -202,7 +210,7 @@ export function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {librarySections.map((section) => {
               const Icon = section.icon;
               return (
@@ -283,6 +291,11 @@ export function Home() {
                 <li>
                   <Link href="/library/human-health" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     {isRTL ? "الصحة البشرية" : "Human Health"}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/library/history" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    {isRTL ? "التاريخ" : "History"}
                   </Link>
                 </li>
               </ul>

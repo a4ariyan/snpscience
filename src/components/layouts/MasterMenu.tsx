@@ -16,6 +16,7 @@ const translations = {
     snpLibrary: "SNP Library",
     populationGenomics: "Population Genomics",
     humanHealth: "Human Health",
+    history: "History",
     snpLab: "SNP Lab",
     ourStudies: "Our Studies",
     ourGithub: "Our GitHub",
@@ -26,6 +27,7 @@ const translations = {
     snpLibrary: "مكتبة SNP",
     populationGenomics: "علم الجينوم السكاني",
     humanHealth: "الصحة البشرية",
+    history: "التاريخ",
     snpLab: "مختبر SNP",
     ourStudies: "دراساتنا",
     ourGithub: "GitHub الخاص بنا",
@@ -33,32 +35,14 @@ const translations = {
   },
 };
 
-const populationGenomicsSubcategories = [
-  { key: "gwas", en: "GWAS Studies", ar: "دراسات GWAS", path: "/library/population-genomics/gwas" },
-  { key: "allele-freq", en: "Allele Frequencies", ar: "ترددات الأليلات", path: "/library/population-genomics/allele-frequencies" },
-  { key: "phylogenetics", en: "Phylogenetics", ar: "علم التطور", path: "/library/population-genomics/phylogenetics" },
-  { key: "population-structure", en: "Population Structure", ar: "بنية السكان", path: "/library/population-genomics/population-structure" },
-  { key: "natural-selection", en: "Natural Selection", ar: "الانتقاء الطبيعي", path: "/library/population-genomics/natural-selection" },
-  { key: "genetic-drift", en: "Genetic Drift", ar: "الانجراف الوراثي", path: "/library/population-genomics/genetic-drift" },
-  { key: "migration-patterns", en: "Migration Patterns", ar: "أنماط الهجرة", path: "/library/population-genomics/migration-patterns" },
-  { key: "ancient-dna", en: "Ancient DNA", ar: "الحمض النووي القديم", path: "/library/population-genomics/ancient-dna" },
-];
-
-const humanHealthSubcategories = [
-  { key: "disease-risk", en: "Disease Risk Variants", ar: "متغيرات خطر المرض", path: "/library/human-health/disease-risk" },
-  { key: "pharmacogenomics", en: "Pharmacogenomics", ar: "علم الجينوم الدوائي", path: "/library/human-health/pharmacogenomics" },
-  { key: "cancer-genomics", en: "Cancer Genomics", ar: "جينوم السرطان", path: "/library/human-health/cancer-genomics" },
-  { key: "rare-diseases", en: "Rare Diseases", ar: "الأمراض النادرة", path: "/library/human-health/rare-diseases" },
-  { key: "cardiovascular", en: "Cardiovascular Genetics", ar: "الوراثة القلبية", path: "/library/human-health/cardiovascular" },
-  { key: "neurogenomics", en: "Neurogenomics", ar: "علم الجينوم العصبي", path: "/library/human-health/neurogenomics" },
-  { key: "immunogenomics", en: "Immunogenomics", ar: "علم الجينوم المناعي", path: "/library/human-health/immunogenomics" },
-  { key: "nutrigenomics", en: "Nutrigenomics", ar: "علم التغذية الجينومي", path: "/library/human-health/nutrigenomics" },
+const libraryLinks = [
+  { key: "population-genomics", path: "/library/population-genomics", labelKey: "populationGenomics" as const },
+  { key: "human-health", path: "/library/human-health", labelKey: "humanHealth" as const },
+  { key: "history", path: "/library/history", labelKey: "history" as const },
 ];
 
 export function MasterMenu({ isOpen, onClose }: MasterMenuProps) {
   const [libraryOpen, setLibraryOpen] = useState(false);
-  const [popGenOpen, setPopGenOpen] = useState(false);
-  const [humanHealthOpen, setHumanHealthOpen] = useState(false);
   const [labOpen, setLabOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -139,109 +123,23 @@ export function MasterMenu({ isOpen, onClose }: MasterMenuProps) {
 
               <div
                 className={`overflow-hidden transition-all duration-300 ${
-                  libraryOpen ? "max-h-[2000px] mt-1" : "max-h-0"
+                  libraryOpen ? "max-h-48 mt-1" : "max-h-0"
                 }`}
               >
                 <div className={`${isRTL ? "mr-4" : "ml-4"} space-y-1`}>
-                  <div>
+                  {libraryLinks.map((link) => (
                     <button
-                      onClick={() => setPopGenOpen(!popGenOpen)}
-                      className={`w-full flex items-center justify-between px-4 py-2.5 text-sm rounded-lg transition-colors ${
-                        isPathActive("/library/population-genomics")
+                      key={link.key}
+                      onClick={() => handleNav(link.path)}
+                      className={`w-full text-left block px-4 py-2.5 text-sm rounded-lg transition-colors ${
+                        isActive(link.path)
                           ? "bg-accent text-foreground"
                           : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                       }`}
                     >
-                      <span>{t.populationGenomics}</span>
-                      <ChevronDown
-                        className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                          popGenOpen ? "rotate-180" : ""
-                        }`}
-                      />
+                      {t[link.labelKey]}
                     </button>
-
-                    <div
-                      className={`overflow-hidden transition-all duration-300 ${
-                        popGenOpen ? "max-h-[800px] mt-1" : "max-h-0"
-                      }`}
-                    >
-                      <div className={`${isRTL ? "mr-4" : "ml-4"} space-y-0.5`}>
-                        <button
-                          onClick={() => handleNav("/library/population-genomics")}
-                          className={`w-full text-left block px-4 py-2 text-xs rounded-lg transition-colors ${
-                            isActive("/library/population-genomics")
-                              ? "bg-accent/80 text-foreground font-medium"
-                              : "text-muted-foreground hover:text-foreground hover:bg-accent/30"
-                          }`}
-                        >
-                          {language === "en" ? "All Topics" : "جميع المواضيع"}
-                        </button>
-                        {populationGenomicsSubcategories.map((sub) => (
-                          <button
-                            key={sub.key}
-                            onClick={() => handleNav(sub.path)}
-                            className={`w-full text-left block px-4 py-2 text-xs rounded-lg transition-colors ${
-                              isActive(sub.path)
-                                ? "bg-accent/80 text-foreground font-medium"
-                                : "text-muted-foreground hover:text-foreground hover:bg-accent/30"
-                            }`}
-                          >
-                            {language === "en" ? sub.en : sub.ar}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <button
-                      onClick={() => setHumanHealthOpen(!humanHealthOpen)}
-                      className={`w-full flex items-center justify-between px-4 py-2.5 text-sm rounded-lg transition-colors ${
-                        isPathActive("/library/human-health")
-                          ? "bg-accent text-foreground"
-                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                      }`}
-                    >
-                      <span>{t.humanHealth}</span>
-                      <ChevronDown
-                        className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                          humanHealthOpen ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-
-                    <div
-                      className={`overflow-hidden transition-all duration-300 ${
-                        humanHealthOpen ? "max-h-[800px] mt-1" : "max-h-0"
-                      }`}
-                    >
-                      <div className={`${isRTL ? "mr-4" : "ml-4"} space-y-0.5`}>
-                        <button
-                          onClick={() => handleNav("/library/human-health")}
-                          className={`w-full text-left block px-4 py-2 text-xs rounded-lg transition-colors ${
-                            isActive("/library/human-health")
-                              ? "bg-accent/80 text-foreground font-medium"
-                              : "text-muted-foreground hover:text-foreground hover:bg-accent/30"
-                          }`}
-                        >
-                          {language === "en" ? "All Topics" : "جميع المواضيع"}
-                        </button>
-                        {humanHealthSubcategories.map((sub) => (
-                          <button
-                            key={sub.key}
-                            onClick={() => handleNav(sub.path)}
-                            className={`w-full text-left block px-4 py-2 text-xs rounded-lg transition-colors ${
-                              isActive(sub.path)
-                                ? "bg-accent/80 text-foreground font-medium"
-                                : "text-muted-foreground hover:text-foreground hover:bg-accent/30"
-                            }`}
-                          >
-                            {language === "en" ? sub.en : sub.ar}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </nav>
