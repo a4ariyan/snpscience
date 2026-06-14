@@ -1,12 +1,14 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import {
   Language,
   DEFAULT_LANGUAGE,
   TranslationKey,
   t as translate,
 } from "@/shared/language";
+import { LANGUAGE_COOKIE } from "@/shared/language";
 
 interface LanguageContextType {
   language: Language;
@@ -17,9 +19,17 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-const LANGUAGE_STORAGE_KEY = "snp-language";
+const LANGUAGE_STORAGE_KEY = LANGUAGE_COOKIE;
+
+function persistLanguage(lang: Language) {
+  localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+  document.cookie = `${LANGUAGE_COOKIE}=${lang};path=/;max-age=31536000;SameSite=Lax`;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  document.documentElement.lang = lang;
+}
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const [language, setLanguageState] = useState<Language>(DEFAULT_LANGUAGE);
   const [mounted, setMounted] = useState(false);
 
@@ -27,15 +37,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
     if (stored === "ar" || stored === "en") {
       setLanguageState(stored);
+      persistLanguage(stored);
     }
     setMounted(true);
   }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
-    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-    document.documentElement.lang = lang;
+    persistLanguage(lang);
+    router.refresh();
   };
 
   useEffect(() => {

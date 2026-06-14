@@ -2,6 +2,8 @@ export type Language = "en" | "ar";
 
 export const DEFAULT_LANGUAGE: Language = "en";
 
+export const LANGUAGE_COOKIE = "snp-language";
+
 export const translations = {
   en: {
     home: "Home",
