@@ -52,10 +52,26 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/lab"
+                  href="/lab/studies"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {isArabic ? "مختبر SNP" : "SNP Lab"}
+                  {isArabic ? "دراساتنا" : "Our Studies"}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/lab/github"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {isArabic ? "GitHub الخاص بنا" : "Our GitHub"}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/lab/projects"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {isArabic ? "المشاريع" : "Projects"}
                 </Link>
               </li>
             </ul>

@@ -3,7 +3,35 @@
 import { Header } from "@/components/layouts/Header";
 import { Footer } from "@/components/layouts/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ArrowLeft, FlaskConical } from "lucide-react";
+import Link from "next/link";
+import { FlaskConical, Code, Play } from "lucide-react";
+
+const categories = [
+  {
+    title: "Our Studies",
+    titleAr: "دراساتنا",
+    description: "Research and studies from the SNP Lab",
+    descriptionAr: "أبحاثنا ودراساتنا في مختبر SNP",
+    path: "/lab/studies",
+    icon: FlaskConical,
+  },
+  {
+    title: "Our GitHub",
+    titleAr: "GitHub الخاص بنا",
+    description: "Open source code repositories and tools from SNP Lab",
+    descriptionAr: "مستودعات الأكواد والأدوات مفتوحة المصدر من مختبر SNP",
+    path: "/lab/github",
+    icon: Code,
+  },
+  {
+    title: "Projects",
+    titleAr: "المشاريع",
+    description: "Explanation of studies in the libraries in video formats",
+    descriptionAr: "شرح الدراسات في المكتبات بصيغة فيديو",
+    path: "/lab/projects",
+    icon: Play,
+  },
+];
 
 export function SnpLab() {
   const { language } = useLanguage();
@@ -16,13 +44,6 @@ export function SnpLab() {
       <main className="pt-16">
         <section className="border-b border-border">
           <div className="max-w-7xl mx-auto px-6 py-16">
-            <button
-              onClick={() => window.history.back()}
-              className="mb-6 flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2 rtl:rotate-180" />
-              {isArabic ? "رجوع" : "Back"}
-            </button>
             <h1 className="text-4xl md:text-5xl font-light">
               {isArabic ? "مختبر SNP" : "SNP Lab"}
             </h1>
@@ -34,20 +55,25 @@ export function SnpLab() {
           </div>
         </section>
 
-        <section className="py-24">
+        <section className="py-12">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="flex flex-col items-center text-center max-w-lg mx-auto">
-              <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-                <FlaskConical className="w-10 h-10 text-primary" />
-              </div>
-              <h2 className="text-3xl font-light mb-4">
-                {isArabic ? "قريباً" : "Coming Soon"}
-              </h2>
-              <p className="text-muted-foreground leading-relaxed">
-                {isArabic
-                  ? "نعمل على نشر دراساتنا وأبحاثنا. ترقبوا التحديثات."
-                  : "We're working on publishing our research and studies. Stay tuned."}
-              </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {categories.map((cat) => {
+                const Icon = cat.icon;
+                return (
+                  <Link key={cat.path} href={cat.path}>
+                    <div className="group text-left p-8 rounded-xl border border-border bg-card hover:bg-accent/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg cursor-pointer h-full">
+                      <Icon className="w-10 h-10 text-primary mb-4 group-hover:scale-110 transition-transform" />
+                      <h2 className="text-2xl font-light mb-2 group-hover:text-primary transition-colors">
+                        {isArabic ? cat.titleAr : cat.title}
+                      </h2>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        {isArabic ? cat.descriptionAr : cat.description}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>

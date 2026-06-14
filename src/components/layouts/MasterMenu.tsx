@@ -17,6 +17,9 @@ const translations = {
     populationGenomics: "Population Genomics",
     humanHealth: "Human Health",
     snpLab: "SNP Lab",
+    ourStudies: "Our Studies",
+    ourGithub: "Our GitHub",
+    projects: "Projects",
   },
   ar: {
     navigation: "التنقل",
@@ -24,6 +27,9 @@ const translations = {
     populationGenomics: "علم الجينوم السكاني",
     humanHealth: "الصحة البشرية",
     snpLab: "مختبر SNP",
+    ourStudies: "دراساتنا",
+    ourGithub: "GitHub الخاص بنا",
+    projects: "المشاريع",
   },
 };
 
@@ -53,6 +59,7 @@ export function MasterMenu({ isOpen, onClose }: MasterMenuProps) {
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [popGenOpen, setPopGenOpen] = useState(false);
   const [humanHealthOpen, setHumanHealthOpen] = useState(false);
+  const [labOpen, setLabOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { language } = useLanguage();
@@ -246,7 +253,7 @@ export function MasterMenu({ isOpen, onClose }: MasterMenuProps) {
             </h3>
             <nav className="space-y-1">
               <button
-                onClick={() => handleNav("/lab")}
+                onClick={() => setLabOpen(!labOpen)}
                 className={`w-full flex items-center justify-between px-4 py-3 text-base rounded-lg transition-colors ${
                   isPathActive("/lab")
                     ? "bg-primary text-primary-foreground"
@@ -254,7 +261,51 @@ export function MasterMenu({ isOpen, onClose }: MasterMenuProps) {
                 }`}
               >
                 <span>{t.snpLab}</span>
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform duration-200 ${
+                    labOpen ? "rotate-180" : ""
+                  }`}
+                />
               </button>
+
+              <div
+                className={`overflow-hidden transition-all duration-200 ${
+                  labOpen ? "max-h-48 mt-1" : "max-h-0"
+                }`}
+              >
+                <div className={`${isRTL ? "mr-4" : "ml-4"} space-y-1`}>
+                  <button
+                    onClick={() => handleNav("/lab/studies")}
+                    className={`w-full text-left block px-4 py-2.5 text-sm rounded-lg transition-colors ${
+                      isActive("/lab/studies")
+                        ? "bg-accent text-foreground"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    }`}
+                  >
+                    {t.ourStudies}
+                  </button>
+                  <button
+                    onClick={() => handleNav("/lab/github")}
+                    className={`w-full text-left block px-4 py-2.5 text-sm rounded-lg transition-colors ${
+                      isActive("/lab/github")
+                        ? "bg-accent text-foreground"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    }`}
+                  >
+                    {t.ourGithub}
+                  </button>
+                  <button
+                    onClick={() => handleNav("/lab/projects")}
+                    className={`w-full text-left block px-4 py-2.5 text-sm rounded-lg transition-colors ${
+                      isActive("/lab/projects")
+                        ? "bg-accent text-foreground"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    }`}
+                  >
+                    {t.projects}
+                  </button>
+                </div>
+              </div>
             </nav>
           </div>
         </div>

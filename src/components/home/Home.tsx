@@ -248,10 +248,10 @@ export function Home() {
                 {isRTL ? "استكشف المكتبة" : "Explore Library"}
               </Link>
               <Link
-                href="/lab"
+                href="/lab/studies"
                 className="inline-flex items-center justify-center px-6 py-2.5 rounded-lg border border-border bg-background hover:bg-accent transition-colors text-sm font-medium"
               >
-                {isRTL ? "المختبر" : "SNP Lab"}
+                {isRTL ? "دراساتنا" : "Our Studies"}
               </Link>
             </div>
           </div>
@@ -294,8 +294,18 @@ export function Home() {
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/lab" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    {isRTL ? "مختبر SNP" : "SNP Lab"}
+                  <Link href="/lab/studies" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    {isRTL ? "دراساتنا" : "Our Studies"}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/lab/github" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    {isRTL ? "GitHub الخاص بنا" : "Our GitHub"}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/lab/projects" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    {isRTL ? "المشاريع" : "Projects"}
                   </Link>
                 </li>
               </ul>
