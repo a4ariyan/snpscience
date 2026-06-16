@@ -3,11 +3,11 @@ import { Footer } from "@/components/layouts/Footer";
 import { HomeHeader } from "@/components/home/HomeHeader";
 import { HomeHeroBackground } from "@/components/home/HomeHeroBackground";
 import { getServerLanguage } from "@/lib/language.server";
+import { t } from "@/lib/i18n";
 import {
   heroImages,
   mainSections,
   librarySections,
-  t,
 } from "@/shared/home-content";
 
 export async function Home() {

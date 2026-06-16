@@ -1,5 +1,4 @@
 import { BookOpen, Dna, HeartPulse, Monitor } from "lucide-react";
-import type { Language } from "@/shared/language";
 
 export const heroImages = [
   "/images/aerial-1.jpg",
@@ -46,7 +45,3 @@ export const librarySections = [
     icon: HeartPulse,
   },
 ];
-
-export function t(lang: Language, en: string, ar: string) {
-  return lang === "ar" ? ar : en;
-}

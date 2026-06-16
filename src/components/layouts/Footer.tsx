@@ -1,29 +1,31 @@
-"use client";
-
 import Link from "next/link";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { getServerLanguage } from "@/lib/language.server";
+import { t } from "@/lib/i18n";
 
-export function Footer() {
+export async function Footer() {
+  const language = await getServerLanguage();
+  const rtl = language === "ar";
+  const textAlign = rtl ? "text-right" : "text-left";
   const currentYear = new Date().getFullYear();
-  const { language } = useLanguage();
-  const isArabic = language === "ar";
 
   return (
     <footer className="border-t border-border bg-card/30 backdrop-blur-sm mt-20">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          <div className={isArabic ? "text-right" : "text-left"}>
+          <div className={textAlign}>
             <h3 className="text-xl font-semibold mb-3 tracking-wide">SNP</h3>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-md">
-              {isArabic
-                ? "استكشاف تعدد أشكال النوكليوتيدات المفردة وعلم الجينوم"
-                : "Exploring Single Nucleotide Polymorphisms & Genomics through research and open-source projects."}
+              {t(
+                language,
+                "Exploring Single Nucleotide Polymorphisms & Genomics through research and open-source projects.",
+                "استكشاف تعدد أشكال النوكليوتيدات المفردة وعلم الجينوم"
+              )}
             </p>
           </div>
 
-          <div className={isArabic ? "text-right" : "text-left"}>
+          <div className={textAlign}>
             <h4 className="text-sm font-medium mb-4 tracking-wide">
-              {isArabic ? "المكتبة" : "Library"}
+              {t(language, "Library", "المكتبة")}
             </h4>
             <ul className="space-y-2">
               <li>
@@ -31,7 +33,7 @@ export function Footer() {
                   href="/library/population-genomics"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {isArabic ? "علم الجينوم السكاني" : "Population Genomics"}
+                  {t(language, "Population Genomics", "علم الجينوم السكاني")}
                 </Link>
               </li>
               <li>
@@ -39,7 +41,7 @@ export function Footer() {
                   href="/library/human-health"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {isArabic ? "الصحة البشرية" : "Human Health"}
+                  {t(language, "Human Health", "الصحة البشرية")}
                 </Link>
               </li>
               <li>
@@ -47,15 +49,15 @@ export function Footer() {
                   href="/library/history"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {isArabic ? "التاريخ" : "History"}
+                  {t(language, "History", "التاريخ")}
                 </Link>
               </li>
             </ul>
           </div>
 
-          <div className={isArabic ? "text-right" : "text-left"}>
+          <div className={textAlign}>
             <h4 className="text-sm font-medium mb-4 tracking-wide">
-              {isArabic ? "المختبر" : "Lab"}
+              {t(language, "Lab", "المختبر")}
             </h4>
             <ul className="space-y-2">
               <li>
@@ -63,7 +65,7 @@ export function Footer() {
                   href="/lab/studies"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {isArabic ? "دراساتنا" : "Our Studies"}
+                  {t(language, "Our Studies", "دراساتنا")}
                 </Link>
               </li>
               <li>
@@ -71,7 +73,7 @@ export function Footer() {
                   href="/lab/github"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {isArabic ? "GitHub الخاص بنا" : "Our GitHub"}
+                  {t(language, "Our GitHub", "GitHub الخاص بنا")}
                 </Link>
               </li>
               <li>
@@ -79,7 +81,7 @@ export function Footer() {
                   href="/lab/projects"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {isArabic ? "المشاريع" : "Projects"}
+                  {t(language, "Projects", "المشاريع")}
                 </Link>
               </li>
             </ul>
@@ -88,7 +90,7 @@ export function Footer() {
 
         <div className="pt-8 border-t border-border">
           <p className="text-sm text-muted-foreground text-center">
-            © {currentYear} SNP. {isArabic ? "جميع الحقوق محفوظة." : "All rights reserved."}
+            © {currentYear} SNP. {t(language, "All rights reserved.", "جميع الحقوق محفوظة.")}
           </p>
         </div>
       </div>
