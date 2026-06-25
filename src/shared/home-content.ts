@@ -2,6 +2,9 @@ import { BookOpen, Dna, HeartPulse, Monitor } from "lucide-react";
 
 export const HERO_IMAGE = "/images/natural_science.avif";
 
+export const HERO_IMAGE_WIDTH = 1280;
+export const HERO_IMAGE_HEIGHT = 683;
+
 export const mainSections = [
   {
     title: "Our Library",

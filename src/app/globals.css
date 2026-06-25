@@ -28,6 +28,8 @@
   --color-ring: var(--ring);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif-display: var(--font-libre-baskerville), "Times New Roman", Georgia, serif;
+  --font-arabic-serif: var(--font-noto-serif-arabic), "Noto Serif Arabic", serif;
 }
 
 :root {
