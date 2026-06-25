@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://snpscience.com"),
   title: "SNP — Research on Natural Science",
   description:
     "Exploring Single Nucleotide Polymorphisms & Genomics through research and open-source projects.",
