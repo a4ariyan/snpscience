@@ -1,10 +1,6 @@
 import { BookOpen, Dna, HeartPulse, Monitor } from "lucide-react";
 
-export const heroImages = [
-  "/images/aerial-1.jpg",
-  "/images/aerial-2.jpg",
-  "/images/aerial-3.jpg",
-];
+export const HERO_IMAGE = "/images/natural_science.avif";
 
 export const mainSections = [
   {

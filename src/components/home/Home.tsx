@@ -1,11 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Footer } from "@/components/layouts/Footer";
 import { HomeHeader } from "@/components/home/HomeHeader";
-import { HomeHeroBackground } from "@/components/home/HomeHeroBackground";
 import { getServerLanguage } from "@/lib/language.server";
 import { t } from "@/lib/i18n";
 import {
-  heroImages,
+  HERO_IMAGE,
   mainSections,
   librarySections,
 } from "@/shared/home-content";
@@ -23,15 +23,29 @@ export async function Home() {
       <HomeHeader />
 
       <section className="relative h-[50vh] md:h-[65vh] min-h-[400px] md:min-h-[500px] overflow-hidden mt-16">
-        <HomeHeroBackground images={heroImages} />
+        <Image
+          src={HERO_IMAGE}
+          alt=""
+          fill
+          priority
+          className="object-cover object-center"
+          sizes="100vw"
+        />
 
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+        <div
+          className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/15 to-black/40"
+          aria-hidden
+        />
+        <div
+          className="absolute inset-0 bg-[radial-gradient(ellipse_50%_42%_at_50%_50%,rgba(0,0,0,0.38)_0%,transparent_68%)]"
+          aria-hidden
+        />
 
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-light text-white mb-4 tracking-tight">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-light text-white mb-4 tracking-tight drop-shadow-[0_2px_24px_rgba(0,0,0,0.8)]">
             SNP
           </h1>
-          <p className="text-lg md:text-xl text-white/90 font-light max-w-2xl">
+          <p className="text-lg md:text-xl text-white/95 font-light max-w-2xl drop-shadow-[0_1px_12px_rgba(0,0,0,0.7)]">
             {t(
               language,
               "Research on Natural Science.",
