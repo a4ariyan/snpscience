@@ -27,11 +27,15 @@ export async function Home() {
               {t(language, "Explore", "استكشف")}
             </h2>
             <p className="text-muted-foreground text-base max-w-xl">
-              {t(language, "Research library and lab", "مكتبة الأبحاث والمختبر")}
+              {t(
+                language,
+                "Research library, lab, and products",
+                "مكتبة الأبحاث والمختبر والمنتجات"
+              )}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {mainSections.map((section) => {
               const Icon = section.icon;
               return (

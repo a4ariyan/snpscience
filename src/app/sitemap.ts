@@ -14,6 +14,7 @@ const staticRoutes = [
   "/lab/studies",
   "/lab/github",
   "/lab/projects",
+  "/products",
   "/articles",
   "/videos",
 ] as const;

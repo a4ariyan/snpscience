@@ -1,4 +1,4 @@
-import { BookOpen, Dna, HeartPulse, Monitor } from "lucide-react";
+import { BookOpen, Dna, FlaskConical, HeartPulse, Monitor } from "lucide-react";
 
 export const HERO_IMAGE = "/images/natural_science.avif";
 
@@ -23,6 +23,14 @@ export const mainSections = [
     descriptionAr: "دراساتنا وأدواتنا مفتوحة المصدر وشروحات المشاريع",
     path: "/lab",
     icon: Monitor,
+  },
+  {
+    title: "Our Products",
+    titleAr: "منتجاتنا",
+    description: "Research-grade peptides — purity, quality, and potential",
+    descriptionAr: "ببتيدات بحثية — نقاء وجودة وإمكانات",
+    path: "/products",
+    icon: FlaskConical,
   },
 ];
 
