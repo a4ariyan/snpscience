@@ -40,10 +40,10 @@ export function ProductsCatalog({ language }: ProductsCatalogProps) {
                 key={category.id}
                 type="button"
                 onClick={() => setCategoryId(category.id)}
-                className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium transition-colors ${
+                className={`inline-flex shrink-0 items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
                   isActive
-                    ? "border-foreground bg-foreground text-background"
-                    : "border-border bg-card text-foreground hover:bg-accent"
+                    ? "bg-foreground text-background"
+                    : "bg-card border border-border text-foreground hover:bg-muted"
                 }`}
               >
                 <span>{label}</span>
