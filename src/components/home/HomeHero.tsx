@@ -7,7 +7,7 @@ export async function HomeHero() {
 
   return (
     <section
-      className="relative mt-16 w-full overflow-hidden bg-[#f3f3f1] text-[#1a3a30] h-[calc(100vw*683/1280)] max-h-[50vh] min-h-[200px] md:min-h-[420px] md:max-h-[min(60vh,600px)] md:h-[clamp(420px,calc(100vw*683/1280),min(60vh,600px))]"
+      className="relative mt-20 w-full overflow-hidden bg-[#f3f3f1] text-[#1a3a30] h-[calc(100vw*683/1280)] max-h-[50vh] min-h-[200px] md:min-h-[420px] md:max-h-[min(60vh,600px)] md:h-[clamp(420px,calc(100vw*683/1280),min(60vh,600px))]"
     >
       <div
         aria-hidden

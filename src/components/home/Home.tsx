@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Footer } from "@/components/layouts/Footer";
-import { HomeHeader } from "@/components/home/HomeHeader";
+import { Header } from "@/components/layouts/Header";
 import { HomeHero } from "@/components/home/HomeHero";
 import { getServerLanguage } from "@/lib/language.server";
 import { t } from "@/lib/i18n";
@@ -16,7 +16,7 @@ export async function Home() {
       className={`min-h-screen bg-background text-foreground ${isRTL ? "rtl" : "ltr"}`}
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <HomeHeader />
+      <Header />
 
       <HomeHero />
 

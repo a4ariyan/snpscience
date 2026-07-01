@@ -2,142 +2,189 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Menu, Moon, Sun, X } from "lucide-react";
-import { MasterMenu } from "@/components/layouts/MasterMenu";
+import { usePathname } from "next/navigation";
+import { ShoppingBag, User, Menu, X, ChevronDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useTheme } from "@/contexts/ThemeContext";
+import { t } from "@/lib/i18n";
 
 export function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { language, setLanguage } = useLanguage();
-  const { theme, toggleTheme } = useTheme();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  
+  const { language } = useLanguage();
+  const pathname = usePathname();
   const isArabic = language === "ar";
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setMenuOpen(false);
-        setSearchOpen(false);
-      }
-    };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, []);
+    setMobileMenuOpen(false);
+    setActiveDropdown(null);
+  }, [pathname]);
 
-  const toggleLanguage = () => {
-    setLanguage(language === "en" ? "ar" : "en");
-  };
+  const navItems = [
+    {
+      id: "lab",
+      labelEn: "Lab",
+      labelAr: "المختبر",
+      href: "/lab",
+      dropdown: [
+        { labelEn: "Our Studies", labelAr: "دراساتنا", href: "/lab/studies" },
+        { labelEn: "Our GitHub", labelAr: "GitHub الخاص بنا", href: "/lab/github" },
+        { labelEn: "Projects", labelAr: "المشاريع", href: "/lab/projects" },
+      ],
+    },
+    {
+      id: "library",
+      labelEn: "Library",
+      labelAr: "المكتبة",
+      href: "/library",
+      dropdown: [
+        { labelEn: "Population Genomics", labelAr: "علم الجينوم السكاني", href: "/library/population-genomics" },
+        { labelEn: "Human Health", labelAr: "الصحة البشرية", href: "/library/human-health" },
+        { labelEn: "History", labelAr: "التاريخ", href: "/library/history" },
+      ],
+    },
+    {
+      id: "products",
+      labelEn: "Products",
+      labelAr: "منتجاتنا",
+      href: "/products",
+    },
+  ];
 
   return (
-    <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-background/95 backdrop-blur-lg shadow-lg border-b border-border/50"
-            : "bg-background/98 backdrop-blur-md border-b border-border"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/">
-              <span className="text-lg font-semibold cursor-pointer whitespace-nowrap tracking-wide">
-                SNP
-              </span>
-            </Link>
-          </div>
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-background/95 backdrop-blur-md shadow-sm border-b border-border/50 h-16"
+          : "bg-background border-b border-border/0 h-20"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+        
+        {/* Left: Logo */}
+        <div className="flex items-center">
+          <Link href="/">
+            <span className="text-xl font-bold tracking-tight text-foreground hover:text-primary transition-colors">
+              SNP
+            </span>
+          </Link>
+        </div>
 
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-2.5 px-4 py-2 rounded-lg hover:bg-accent/80 active:scale-95 transition-all duration-200"
-            aria-label="Toggle menu"
-            aria-expanded={menuOpen}
-          >
-            <Menu className="w-5 h-5" strokeWidth={1.5} />
-            <span className="text-sm font-light tracking-wide">
-              {isArabic ? "القائمة" : "Menu"}
+        {/* Center: Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-8">
+          {navItems.map((item) => (
+            <div
+              key={item.id}
+              className="relative group h-full flex items-center"
+              onMouseEnter={() => setActiveDropdown(item.id)}
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
+              <Link
+                href={item.href}
+                className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-8"
+              >
+                {t(language, item.labelEn, item.labelAr)}
+                {item.dropdown && (
+                  <ChevronDown className="w-3.5 h-3.5 opacity-50 group-hover:rotate-180 transition-transform duration-200" />
+                )}
+              </Link>
+
+              {/* Desktop Dropdown */}
+              {item.dropdown && activeDropdown === item.id && (
+                <div className="absolute top-[calc(100%-1rem)] left-1/2 -translate-x-1/2 w-56 bg-card border border-border shadow-lg rounded-xl overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {item.dropdown.map((drop) => (
+                    <Link
+                      key={drop.href}
+                      href={drop.href}
+                      className="block px-5 py-2.5 text-sm text-muted-foreground hover:text-primary hover:bg-accent/50 transition-colors"
+                    >
+                      {t(language, drop.labelEn, drop.labelAr)}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </nav>
+
+        {/* Right: Actions */}
+        <div className="flex items-center gap-4">
+          <button className="hidden md:flex items-center justify-center w-9 h-9 rounded-full hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
+            <User className="w-4 h-4" />
+          </button>
+          
+          <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <ShoppingBag className="w-4 h-4 text-foreground" />
+            <span className="text-sm font-medium hidden sm:inline-block">
+              {t(language, "Cart", "العربة")}
             </span>
           </button>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="p-2.5 rounded-lg hover:bg-accent/80 active:scale-95 transition-all duration-200"
-              aria-label="Search"
-            >
-              <Search className="w-5 h-5" strokeWidth={1.5} />
-            </button>
-
-            <button
-              onClick={toggleTheme}
-              className="p-2.5 rounded-lg hover:bg-accent/80 active:scale-95 transition-all duration-200"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? (
-                <Sun className="w-5 h-5" strokeWidth={1.5} />
-              ) : (
-                <Moon className="w-5 h-5" strokeWidth={1.5} />
-              )}
-            </button>
-
-            <button
-              onClick={toggleLanguage}
-              className="text-sm font-light px-3 py-2 rounded-lg hover:bg-accent/80 active:scale-95 transition-all duration-200 tracking-wide"
-              aria-label="Toggle language"
-            >
-              {isArabic ? "EN" : "عربي"}
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <MasterMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
-
-      {searchOpen && (
-        <div
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-start justify-center pt-32"
-          onClick={() => setSearchOpen(false)}
-        >
-          <div
-            className="w-full max-w-3xl px-4"
-            onClick={(e) => e.stopPropagation()}
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-accent/50 text-foreground ml-2"
           >
-            <div className="bg-card border border-border rounded-xl shadow-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-light tracking-tight">Search SNP</h2>
-                <button
-                  onClick={() => setSearchOpen(false)}
-                  className="p-2 rounded-lg hover:bg-accent transition-colors"
-                  aria-label="Close search"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Navigation */}
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-background border-b border-border shadow-xl animate-in slide-in-from-top-2">
+          <div className="px-6 py-4 flex flex-col gap-2 max-h-[calc(100vh-5rem)] overflow-y-auto">
+            {navItems.map((item) => (
+              <div key={item.id} className="flex flex-col">
+                <div className="flex items-center justify-between">
+                  <Link
+                    href={item.href}
+                    className="py-3 text-base font-medium text-foreground"
+                  >
+                    {t(language, item.labelEn, item.labelAr)}
+                  </Link>
+                  {item.dropdown && (
+                    <button
+                      onClick={() => setActiveDropdown(activeDropdown === item.id ? null : item.id)}
+                      className="p-3 text-muted-foreground"
+                    >
+                      <ChevronDown className={`w-4 h-4 transition-transform ${activeDropdown === item.id ? "rotate-180" : ""}`} />
+                    </button>
+                  )}
+                </div>
+                
+                {/* Mobile Dropdown Expanded */}
+                {item.dropdown && activeDropdown === item.id && (
+                  <div className="flex flex-col pl-4 border-l-2 border-border/50 ml-2 mt-1 mb-3 space-y-1">
+                    {item.dropdown.map((drop) => (
+                      <Link
+                        key={drop.href}
+                        href={drop.href}
+                        className="py-2.5 text-sm text-muted-foreground"
+                      >
+                        {t(language, drop.labelEn, drop.labelAr)}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
-
-              <input
-                type="text"
-                placeholder="Search studies, projects..."
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-                autoFocus
-              />
-
-              <p className="text-sm text-muted-foreground mt-4 flex items-center gap-2">
-                <kbd className="px-2 py-1 bg-muted rounded text-xs">ESC</kbd>
-                to close
-              </p>
-            </div>
+            ))}
+            
+            <div className="h-px bg-border my-4" />
+            <button className="flex items-center gap-3 py-3 text-base font-medium text-foreground">
+              <User className="w-5 h-5" />
+              {t(language, "Account", "الحساب")}
+            </button>
           </div>
         </div>
       )}
-    </>
+    </header>
   );
 }
