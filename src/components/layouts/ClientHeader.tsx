@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ShoppingBag, User, Menu, X, ChevronDown, LogOut, LayoutDashboard } from "lucide-react";
@@ -19,6 +19,7 @@ export function ClientHeader({ user, isAdmin }: ClientHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   
   const { language } = useLanguage();
   const pathname = usePathname();
@@ -36,6 +37,21 @@ export function ClientHeader({ user, isAdmin }: ClientHeaderProps) {
     setActiveDropdown(null);
     setUserMenuOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+
+    if (userMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [userMenuOpen]);
 
   const handleSignOut = async () => {
     const supabase = createClient();
@@ -143,27 +159,39 @@ export function ClientHeader({ user, isAdmin }: ClientHeaderProps) {
             </Link>
           ) : (
             <div 
-              className="hidden md:flex relative group h-full items-center"
-              onMouseEnter={() => setUserMenuOpen(true)}
-              onMouseLeave={() => setUserMenuOpen(false)}
+              ref={userMenuRef}
+              className="hidden md:flex relative h-full items-center"
             >
               <button 
-                className="flex items-center justify-center w-9 h-9 rounded-full bg-accent/50 text-foreground transition-colors"
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-accent/50 text-foreground transition-colors hover:bg-accent"
                 aria-label="User menu"
+                aria-expanded={userMenuOpen}
               >
                 <User className="w-4 h-4" />
               </button>
               
               {userMenuOpen && (
-                <div className="absolute top-[calc(100%-0.5rem)] right-0 w-56 bg-card border border-border shadow-lg rounded-xl overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="px-5 py-3 border-b border-border/50 mb-1">
-                    <p className="text-sm font-medium text-foreground truncate">
-                      {user.email}
-                    </p>
+                <div className="absolute top-[calc(100%-0.5rem)] right-0 w-64 bg-card border border-border shadow-lg rounded-xl overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="px-5 py-4 border-b border-border/50 mb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold">
+                        {user.email ? user.email.charAt(0).toUpperCase() : "U"}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">
+                          {user.email?.split("@")[0] || "User"}
+                        </p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                   {isAdmin && (
                     <Link
                       href="/admin"
+                      onClick={() => setUserMenuOpen(false)}
                       className="flex items-center gap-2 px-5 py-2.5 text-sm text-muted-foreground hover:text-primary hover:bg-accent/50 transition-colors"
                     >
                       <LayoutDashboard className="w-4 h-4" />
@@ -171,7 +199,10 @@ export function ClientHeader({ user, isAdmin }: ClientHeaderProps) {
                     </Link>
                   )}
                   <button
-                    onClick={handleSignOut}
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      handleSignOut();
+                    }}
                     className="w-full flex items-center gap-2 px-5 py-2.5 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors text-left"
                   >
                     <LogOut className="w-4 h-4" />
