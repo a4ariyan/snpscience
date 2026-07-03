@@ -15,13 +15,7 @@ export default async function AdminLayout({
     redirect("/login?next=/admin");
   }
 
-  const { data: profile } = await supabase
-    .from("users")
-    .select("is_admin")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile?.is_admin) {
+  if (user?.app_metadata?.is_admin !== true) {
     redirect("/");
   }
 

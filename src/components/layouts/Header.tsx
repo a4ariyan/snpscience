@@ -8,17 +8,7 @@ export async function Header() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let isAdmin = false;
-
-  if (user) {
-    const { data: profile } = await supabase
-      .from("users")
-      .select("is_admin")
-      .eq("id", user.id)
-      .single();
-
-    isAdmin = profile?.is_admin || false;
-  }
+  const isAdmin = user?.app_metadata?.is_admin === true;
 
   return <ClientHeader user={user} isAdmin={isAdmin} />;
 }
