@@ -1,51 +1,53 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import type { Provider } from "@supabase/supabase-js";
+import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { getAuthCallbackUrl } from "@/lib/auth-redirect";
+import { cn } from "@/lib/utils";
 
-type Mode = "signin" | "signup";
+type Tab = "signin" | "signup";
 
-const oauthProviders: {
-  id: Provider;
-  label: string;
-  icon: ReactNode;
-}[] = [
-  { id: "google", label: "Continue with Google", icon: <GoogleIcon /> },
-  { id: "github", label: "Continue with GitHub", icon: <GithubIcon /> },
-  { id: "apple", label: "Continue with Apple", icon: <AppleIcon /> },
-];
-
-export function AuthForm({ mode }: { mode: Mode }) {
+export function AuthForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/";
-  const isSignup = mode === "signup";
+  const initialTab: Tab =
+    searchParams.get("tab") === "signup" ? "signup" : "signin";
 
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [oauthLoading, setOauthLoading] = useState<Provider | null>(null);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
-  async function handleOAuth(provider: Provider) {
+  const isSignup = tab === "signup";
+
+  function switchTab(nextTab: Tab) {
+    setTab(nextTab);
     setError(null);
-    setOauthLoading(provider);
+    setNotice(null);
+  }
+
+  async function handleGoogle() {
+    setError(null);
+    setGoogleLoading(true);
 
     const supabase = createClient();
-    const redirectTo = `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(next)}`;
+    const redirectTo = getAuthCallbackUrl(next);
 
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
-      provider,
+      provider: "google",
       options: { redirectTo },
     });
 
     if (oauthError) {
       setError(oauthError.message);
-      setOauthLoading(null);
+      setGoogleLoading(false);
     }
   }
 
@@ -62,7 +64,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(next)}`,
+          emailRedirectTo: getAuthCallbackUrl(next),
         },
       });
 
@@ -72,9 +74,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
         return;
       }
 
-      // Email confirmation enabled: no session until the user clicks the link.
       if (!data.session) {
-        setNotice("Check your email for a confirmation link to finish signing up.");
+        setNotice("Check your email to confirm your account.");
         setLoading(false);
         return;
       }
@@ -96,64 +97,69 @@ export function AuthForm({ mode }: { mode: Mode }) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        {oauthProviders.map((provider) => (
+    <div className="w-full max-w-sm">
+      <Link
+        href="/"
+        className="mb-10 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to home
+      </Link>
+
+      <div className="mb-8 flex border-b border-border">
+        {(["signin", "signup"] as const).map((id) => (
           <button
-            key={provider.id}
+            key={id}
             type="button"
-            disabled={!!oauthLoading || loading}
-            onClick={() => handleOAuth(provider.id)}
-            className="flex w-full items-center justify-center gap-3 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
+            onClick={() => switchTab(id)}
+            className={cn(
+              "relative flex-1 pb-3 text-sm font-medium transition-colors",
+              tab === id
+                ? "text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary"
+                : "text-muted-foreground hover:text-foreground"
+            )}
           >
-            {provider.icon}
-            {oauthLoading === provider.id ? "Redirecting…" : provider.label}
+            {id === "signin" ? "Sign in" : "Sign up"}
           </button>
         ))}
       </div>
 
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-border" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            or with email
-          </span>
-        </div>
+      <button
+        type="button"
+        disabled={googleLoading || loading}
+        onClick={handleGoogle}
+        className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-border py-2.5 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
+      >
+        <GoogleIcon />
+        {googleLoading ? "Redirecting…" : "Continue with Google"}
+      </button>
+
+      <div className="my-6 flex items-center gap-3">
+        <span className="h-px flex-1 bg-border" />
+        <span className="text-xs text-muted-foreground">or</span>
+        <span className="h-px flex-1 bg-border" />
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="mb-1.5 block text-sm font-medium">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="password" className="mb-1.5 block text-sm font-medium">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            autoComplete={isSignup ? "new-password" : "current-password"}
-            required
-            minLength={isSignup ? 8 : undefined}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
+        <input
+          type="email"
+          autoComplete="email"
+          required
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full rounded-lg border border-border bg-transparent px-4 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <input
+          type="password"
+          autoComplete={isSignup ? "new-password" : "current-password"}
+          required
+          minLength={isSignup ? 8 : undefined}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full rounded-lg border border-border bg-transparent px-4 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+        />
 
         {error && (
           <p className="text-sm text-destructive" role="alert">
@@ -168,28 +174,18 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
         <button
           type="submit"
-          disabled={loading || !!oauthLoading}
-          className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+          disabled={loading || googleLoading}
+          className="w-full rounded-lg bg-primary py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
         >
           {loading
             ? isSignup
-              ? "Creating account…"
+              ? "Creating…"
               : "Signing in…"
             : isSignup
               ? "Create account"
               : "Sign in"}
         </button>
       </form>
-
-      <p className="text-center text-sm text-muted-foreground">
-        {isSignup ? "Already have an account? " : "Don't have an account? "}
-        <Link
-          href={isSignup ? "/login" : "/signup"}
-          className="font-medium text-foreground hover:text-primary transition-colors"
-        >
-          {isSignup ? "Sign in" : "Sign up"}
-        </Link>
-      </p>
     </div>
   );
 }
@@ -213,22 +209,6 @@ function GoogleIcon() {
         fill="#EA4335"
         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
       />
-    </svg>
-  );
-}
-
-function GithubIcon() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-    </svg>
-  );
-}
-
-function AppleIcon() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
     </svg>
   );
 }
