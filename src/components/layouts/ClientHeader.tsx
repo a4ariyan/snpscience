@@ -25,6 +25,8 @@ export function ClientHeader({ user, isAdmin }: ClientHeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const isArabic = language === "ar";
+  
+  const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -164,20 +166,28 @@ export function ClientHeader({ user, isAdmin }: ClientHeaderProps) {
             >
               <button 
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center justify-center w-9 h-9 rounded-full bg-accent/50 text-foreground transition-colors hover:bg-accent"
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-accent/50 text-foreground transition-colors hover:bg-accent overflow-hidden"
                 aria-label="User menu"
                 aria-expanded={userMenuOpen}
               >
-                <User className="w-4 h-4" />
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="User Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <User className="w-4 h-4" />
+                )}
               </button>
               
               {userMenuOpen && (
                 <div className="absolute top-[calc(100%-0.5rem)] right-0 w-64 bg-card border border-border shadow-lg rounded-xl overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 duration-200">
                   <div className="px-5 py-4 border-b border-border/50 mb-2">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold">
-                        {user.email ? user.email.charAt(0).toUpperCase() : "U"}
-                      </div>
+                      {avatarUrl ? (
+                        <img src={avatarUrl} alt="User Avatar" className="h-10 w-10 shrink-0 rounded-full object-cover" />
+                      ) : (
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold">
+                          {user.email ? user.email.charAt(0).toUpperCase() : "U"}
+                        </div>
+                      )}
                       <div className="flex flex-col min-w-0">
                         <p className="text-sm font-medium text-foreground truncate">
                           {user.email?.split("@")[0] || "User"}
@@ -282,8 +292,20 @@ export function ClientHeader({ user, isAdmin }: ClientHeaderProps) {
               </Link>
             ) : (
               <div className="flex flex-col gap-1">
-                <div className="py-2 mb-2">
-                  <p className="text-sm text-muted-foreground truncate">{user.email}</p>
+                <div className="py-2 mb-2 flex items-center gap-3">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="User Avatar" className="h-10 w-10 shrink-0 rounded-full object-cover" />
+                  ) : (
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold">
+                      {user.email ? user.email.charAt(0).toUpperCase() : "U"}
+                    </div>
+                  )}
+                  <div className="flex flex-col min-w-0">
+                    <p className="text-base font-medium text-foreground truncate">
+                      {user.email?.split("@")[0] || "User"}
+                    </p>
+                    <p className="text-sm text-muted-foreground truncate">{user.email}</p>
+                  </div>
                 </div>
                 {isAdmin && (
                   <Link
