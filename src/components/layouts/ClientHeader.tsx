@@ -173,7 +173,9 @@ export function ClientHeader({ user, isAdmin }: ClientHeaderProps) {
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="User Avatar" className="w-full h-full object-cover" />
                 ) : (
-                  <User className="w-4 h-4" />
+                  <div className="flex w-full h-full items-center justify-center bg-primary/10 text-primary font-semibold text-sm">
+                    {user.email ? user.email.charAt(0).toUpperCase() : "U"}
+                  </div>
                 )}
               </button>
               
