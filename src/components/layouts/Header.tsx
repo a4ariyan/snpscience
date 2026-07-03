@@ -116,9 +116,13 @@ export function Header() {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-4">
-          <button className="hidden md:flex items-center justify-center w-9 h-9 rounded-full hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
+          <Link
+            href="/login"
+            className="hidden md:flex items-center justify-center w-9 h-9 rounded-full hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Sign in"
+          >
             <User className="w-4 h-4" />
-          </button>
+          </Link>
           
           <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <ShoppingBag className="w-4 h-4 text-foreground" />
@@ -178,10 +182,13 @@ export function Header() {
             ))}
             
             <div className="h-px bg-border my-4" />
-            <button className="flex items-center gap-3 py-3 text-base font-medium text-foreground">
+            <Link
+              href="/login"
+              className="flex items-center gap-3 py-3 text-base font-medium text-foreground"
+            >
               <User className="w-5 h-5" />
               {t(language, "Account", "الحساب")}
-            </button>
+            </Link>
           </div>
         </div>
       )}
