@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import type { Language } from "@/shared/language";
 import { t } from "@/lib/i18n";
+import type { CatalogProduct } from "@/features/products/types";
 import {
-  filterProducts,
   getCategoryCount,
   productCategories,
   productFormats,
@@ -13,25 +13,31 @@ import { ProductCard } from "@/components/products/ProductCard";
 
 interface ProductsCatalogProps {
   language: Language;
+  products: CatalogProduct[];
 }
 
-export function ProductsCatalog({ language }: ProductsCatalogProps) {
+export function ProductsCatalog({ language, products }: ProductsCatalogProps) {
   const [categoryId, setCategoryId] =
     useState<(typeof productCategories)[number]["id"]>("all");
   const [formatId, setFormatId] =
     useState<(typeof productFormats)[number]["id"]>("all");
 
-  const visibleProducts = useMemo(
-    () => filterProducts(categoryId, formatId),
-    [categoryId, formatId]
-  );
+  const visibleProducts = useMemo(() => {
+    return products.filter((product) => {
+      const matchesCategory =
+        categoryId === "all" || product.categories.includes(categoryId);
+      const matchesFormat =
+        formatId === "all" || product.format === formatId;
+      return matchesCategory && matchesFormat;
+    });
+  }, [products, categoryId, formatId]);
 
   return (
     <section className="py-10 md:py-14">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-6 flex items-center gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {productCategories.map((category) => {
-            const count = getCategoryCount(category.id, formatId);
+            const count = getCategoryCount(category.id, formatId, products);
             const isActive = categoryId === category.id;
             const label = t(language, category.labelEn, category.labelAr);
 

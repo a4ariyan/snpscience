@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { AdminShell } from "@/components/admin/AdminShell";
 
 export default async function AdminLayout({
   children,
@@ -19,9 +20,5 @@ export default async function AdminLayout({
     redirect("/");
   }
 
-  return (
-    <div className="flex min-h-full">
-      <main className="flex-1">{children}</main>
-    </div>
-  );
+  return <AdminShell>{children}</AdminShell>;
 }

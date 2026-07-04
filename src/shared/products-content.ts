@@ -4,24 +4,11 @@ export type ProductCategoryId =
   | "recovery"
   | "metabolic"
   | "longevity"
-  | "cognitive";
+  | "skin"
+  | "cognitive"
+  | "growth";
 
 export type ProductFormatId = "vial" | "pen" | "spray";
-
-export interface Product {
-  id: string;
-  nameEn: string;
-  nameAr: string;
-  sizeEn: string;
-  sizeAr: string;
-  priceAed: number;
-  priceFrom?: boolean;
-  rating: number;
-  reviewCount: number;
-  categories: ProductCategoryId[];
-  format: ProductFormatId;
-  image?: string;
-}
 
 export const productCategories = [
   {
@@ -41,13 +28,23 @@ export const productCategories = [
   },
   {
     id: "longevity" as const,
-    labelEn: "Longevity",
-    labelAr: "طول العمر",
+    labelEn: "Longevity & Immune",
+    labelAr: "طول العمر والمناعة",
+  },
+  {
+    id: "skin" as const,
+    labelEn: "Skin & Beauty",
+    labelAr: "البشرة والجمال",
   },
   {
     id: "cognitive" as const,
-    labelEn: "Cognitive & Focus",
-    labelAr: "الإدراك والتركيز",
+    labelEn: "Cognitive & Neuro",
+    labelAr: "الإدراك والأعصاب",
+  },
+  {
+    id: "growth" as const,
+    labelEn: "Growth & Body",
+    labelAr: "النمو والجسم",
   },
 ];
 
@@ -89,86 +86,15 @@ export const trustBadges = [
   },
 ];
 
-export const products: Product[] = [
-  {
-    id: "bac-water",
-    nameEn: "Bacteriostatic Water",
-    nameAr: "ماء بكتريوستاتيك",
-    sizeEn: "11 ML",
-    sizeAr: "11 مل",
-    priceAed: 99,
-    rating: 5,
-    reviewCount: 128,
-    categories: ["recovery"],
-    format: "vial",
-  },
-  {
-    id: "glp3-reta",
-    nameEn: "GLP-3 (Reta)",
-    nameAr: "GLP-3 (Reta)",
-    sizeEn: "10 / 30 MG",
-    sizeAr: "10 / 30 مجم",
-    priceAed: 390,
-    priceFrom: true,
-    rating: 5,
-    reviewCount: 86,
-    categories: ["metabolic"],
-    format: "vial",
-  },
-  {
-    id: "glp3-reta-pen",
-    nameEn: "GLP-3 (Reta) Pen",
-    nameAr: "قلم GLP-3 (Reta)",
-    sizeEn: "10 MG",
-    sizeAr: "10 مجم",
-    priceAed: 450,
-    priceFrom: true,
-    rating: 5,
-    reviewCount: 42,
-    categories: ["metabolic"],
-    format: "pen",
-  },
-  {
-    id: "ghk-cu",
-    nameEn: "GHK-CU",
-    nameAr: "GHK-CU",
-    sizeEn: "50 MG",
-    sizeAr: "50 مجم",
-    priceAed: 320,
-    rating: 5,
-    reviewCount: 64,
-    categories: ["recovery", "longevity"],
-    format: "vial",
-  },
-  {
-    id: "mots-c",
-    nameEn: "MOTS-C",
-    nameAr: "MOTS-C",
-    sizeEn: "10 MG",
-    sizeAr: "10 مجم",
-    priceAed: 280,
-    rating: 5,
-    reviewCount: 51,
-    categories: ["longevity", "metabolic"],
-    format: "vial",
-  },
-  {
-    id: "ipamorelin",
-    nameEn: "Ipamorelin",
-    nameAr: "إيباموريلين",
-    sizeEn: "5 MG",
-    sizeAr: "5 مجم",
-    priceAed: 240,
-    rating: 5,
-    reviewCount: 73,
-    categories: ["recovery", "cognitive"],
-    format: "vial",
-  },
-];
+interface FilterableProduct {
+  categories: string[];
+  format: string;
+}
 
 export function getCategoryCount(
   categoryId: (typeof productCategories)[number]["id"],
-  formatFilter: (typeof productFormats)[number]["id"] = "all"
+  formatFilter: (typeof productFormats)[number]["id"] = "all",
+  products: FilterableProduct[] = []
 ) {
   const byFormat =
     formatFilter === "all"
@@ -181,16 +107,4 @@ export function getCategoryCount(
 
   return byFormat.filter((product) => product.categories.includes(categoryId))
     .length;
-}
-
-export function filterProducts(
-  categoryId: (typeof productCategories)[number]["id"],
-  formatId: (typeof productFormats)[number]["id"]
-) {
-  return products.filter((product) => {
-    const matchesCategory =
-      categoryId === "all" || product.categories.includes(categoryId);
-    const matchesFormat = formatId === "all" || product.format === formatId;
-    return matchesCategory && matchesFormat;
-  });
 }

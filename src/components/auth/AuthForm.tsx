@@ -38,11 +38,10 @@ export function AuthForm() {
     setGoogleLoading(true);
 
     const supabase = createClient();
-    const redirectTo = getAuthCallbackUrl(next);
 
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo },
+      options: { redirectTo: getAuthCallbackUrl(next) },
     });
 
     if (oauthError) {
