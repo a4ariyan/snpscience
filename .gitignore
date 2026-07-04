@@ -39,3 +39,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# supabase CLI (local link cache — do not commit)
+supabase/.temp/
