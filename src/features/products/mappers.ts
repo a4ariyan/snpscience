@@ -1,6 +1,6 @@
 import type { Json, LocalizedText, ProductCategory, ProductFormat, ProductRow, ProductStatus } from "@/types/supabase";
-import type { ProductFormData, ProductListItem } from "./types";
-import { CATEGORY_TO_FILTER } from "./constants";
+import type { ProductFormData, ProductListItem, ProductDetail } from "./types";
+import { CATEGORY_TO_FILTER, PRODUCT_CATEGORIES, PRODUCT_FORMATS } from "./constants";
 
 export function parseLocalizedText(value: Json | null | undefined): LocalizedText {
   if (value && typeof value === "object" && !Array.isArray(value)) {
@@ -30,12 +30,7 @@ export function rowToListItem(row: ProductRow): ProductListItem {
 }
 
 export function rowToFormData(row: ProductRow): ProductFormData {
-  const specs =
-    row.specs && typeof row.specs === "object" && !Array.isArray(row.specs)
-      ? Object.entries(row.specs as Record<string, string>).map(
-          ([key, value]) => ({ key, value: String(value) })
-        )
-      : [];
+  const specs = parseSpecs(row);
 
   return {
     titleEn: parseLocalizedText(row.title).en,
@@ -106,11 +101,67 @@ export function formDataToInsert(
   };
 }
 
+function parseSpecs(row: ProductRow): { key: string; value: string }[] {
+  if (row.specs && typeof row.specs === "object" && !Array.isArray(row.specs)) {
+    return Object.entries(row.specs as Record<string, string>).map(
+      ([key, value]) => ({ key, value: String(value) })
+    );
+  }
+  return [];
+}
+
+function categoryLabels(category: ProductCategory) {
+  const match = PRODUCT_CATEGORIES.find((c) => c.value === category);
+  return {
+    categoryLabelEn: match?.labelEn ?? category,
+    categoryLabelAr: match?.labelAr ?? category,
+  };
+}
+
+function formatLabels(format: ProductFormat) {
+  const match = PRODUCT_FORMATS.find((f) => f.value === format);
+  return {
+    formatLabelEn: match?.labelEn ?? format,
+    formatLabelAr: match?.labelAr ?? format,
+  };
+}
+
+export function rowToProductDetail(row: ProductRow): ProductDetail {
+  const category = row.category as ProductCategory;
+  const format = (row.format as ProductFormat) ?? "vial";
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: parseLocalizedText(row.title),
+    subtitle: parseLocalizedText(row.subtitle),
+    description: parseLocalizedText(row.description),
+    category,
+    ...categoryLabels(category),
+    format,
+    ...formatLabels(format),
+    price: Number(row.price),
+    currency: row.currency,
+    stockStatus: row.stock_status,
+    dosageOptions: row.dosage_options ?? [],
+    images: row.images ?? [],
+    labResultsImage: row.lab_results_image,
+    purityPercentage: row.purity_percentage != null ? Number(row.purity_percentage) : null,
+    labMethod: row.lab_method,
+    activeIngredients: row.active_ingredients,
+    commonUses: row.common_uses,
+    specs: parseSpecs(row),
+    disclaimer: row.disclaimer ?? "",
+  };
+}
+
 export function rowToCatalogProduct(row: ProductRow): import("./types").CatalogProduct {
   const title = parseLocalizedText(row.title);
   const subtitle = parseLocalizedText(row.subtitle);
   const sizeEn = subtitle.en || (row.dosage_options?.[0] ?? "");
   const sizeAr = subtitle.ar || (row.dosage_options?.[0] ?? "");
+  const category = row.category as ProductCategory;
+  const labels = categoryLabels(category);
 
   return {
     id: row.id,
@@ -123,8 +174,11 @@ export function rowToCatalogProduct(row: ProductRow): import("./types").CatalogP
     priceFrom: (row.dosage_options?.length ?? 0) > 1,
     rating: null,
     reviewCount: 0,
-    categories: [CATEGORY_TO_FILTER[row.category as ProductCategory]],
+    categories: [CATEGORY_TO_FILTER[category]],
+    categoryLabelEn: labels.categoryLabelEn,
+    categoryLabelAr: labels.categoryLabelAr,
     format: (row.format as ProductFormat) ?? "vial",
+    stockStatus: row.stock_status,
     image: row.images?.[0],
   };
 }
@@ -133,7 +187,9 @@ export function slugify(text: string): string {
   return text
     .toLowerCase()
     .trim()
+    .replace(/[()]/g, " ")
     .replace(/[^\w\s-]/g, "")
     .replace(/[\s_-]+/g, "-")
+    .replace(/-+/g, "-")
     .replace(/^-+|-+$/g, "");
 }

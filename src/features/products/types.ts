@@ -49,8 +49,37 @@ export interface CatalogProduct {
   rating: number | null;
   reviewCount: number;
   categories: string[];
+  categoryLabelEn: string;
+  categoryLabelAr: string;
   format: ProductFormat;
+  stockStatus: boolean;
   image?: string;
+}
+
+export interface ProductDetail {
+  id: string;
+  slug: string;
+  title: LocalizedText;
+  subtitle: LocalizedText;
+  description: LocalizedText;
+  category: ProductCategory;
+  categoryLabelEn: string;
+  categoryLabelAr: string;
+  format: ProductFormat;
+  formatLabelEn: string;
+  formatLabelAr: string;
+  price: number;
+  currency: string;
+  stockStatus: boolean;
+  dosageOptions: string[];
+  images: string[];
+  labResultsImage: string | null;
+  purityPercentage: number | null;
+  labMethod: string | null;
+  activeIngredients: string | null;
+  commonUses: string | null;
+  specs: { key: string; value: string }[];
+  disclaimer: string;
 }
 
 export function emptyProductForm(): ProductFormData {

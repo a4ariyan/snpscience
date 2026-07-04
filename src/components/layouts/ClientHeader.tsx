@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/lib/i18n";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
+import { useCart } from "@/contexts/CartContext";
 
 interface ClientHeaderProps {
   user: SupabaseUser | null;
@@ -24,7 +25,7 @@ export function ClientHeader({ user, isAdmin }: ClientHeaderProps) {
   const { language } = useLanguage();
   const pathname = usePathname();
   const router = useRouter();
-  const isArabic = language === "ar";
+  const { openCart, itemCount } = useCart();
   
   const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
 
@@ -225,11 +226,21 @@ export function ClientHeader({ user, isAdmin }: ClientHeaderProps) {
             </div>
           )}
           
-          <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <button
+            type="button"
+            onClick={openCart}
+            className="relative flex items-center gap-2 hover:opacity-80 transition-opacity"
+            aria-label={t(language, "Cart", "العربة")}
+          >
             <ShoppingBag className="w-4 h-4 text-foreground" />
             <span className="text-sm font-medium hidden sm:inline-block">
               {t(language, "Cart", "العربة")}
             </span>
+            {itemCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground sm:top-0 sm:right-auto sm:-translate-y-1/2 sm:translate-x-1/2">
+                {itemCount > 9 ? "9+" : itemCount}
+              </span>
+            )}
           </button>
 
           {/* Mobile Menu Toggle */}

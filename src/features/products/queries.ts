@@ -79,6 +79,26 @@ export async function getActiveProducts(): Promise<ProductRow[]> {
   return (data as ProductRow[]) ?? [];
 }
 
+export async function getActiveProductBySlug(
+  slug: string
+): Promise<ProductRow | null> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("slug", slug)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (error) {
+    console.error("getActiveProductBySlug error:", error);
+    return null;
+  }
+
+  return data as ProductRow | null;
+}
+
 export async function slugExists(slug: string, excludeId?: string): Promise<boolean> {
   const supabase = await createClient();
 

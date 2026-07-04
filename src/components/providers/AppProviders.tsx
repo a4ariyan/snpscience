@@ -2,11 +2,18 @@
 
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { CartProvider } from "@/contexts/CartContext";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider defaultTheme="dark" switchable>
-      <LanguageProvider>{children}</LanguageProvider>
+      <LanguageProvider>
+        <CartProvider>
+          {children}
+          <CartDrawer />
+        </CartProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

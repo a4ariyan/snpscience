@@ -81,11 +81,7 @@ export async function updateProduct(
   }
 
   const status = keepStatus ?? existing.status;
-  let slug = existing.slug;
-
-  if (formData.titleEn.trim() !== (existing.title as { en: string })?.en) {
-    slug = await uniqueSlug(formData.titleEn, id);
-  }
+  const slug = await uniqueSlug(formData.titleEn, id);
 
   const payload = formDataToInsert(formData, slug, status as "draft" | "active");
 
@@ -112,6 +108,7 @@ export async function updateProduct(
   revalidatePath("/admin/products");
   revalidatePath(`/admin/products/${id}/edit`);
   revalidatePath("/products");
+  revalidatePath(`/products/${slug}`);
   return { success: true, id };
 }
 
@@ -174,11 +171,18 @@ export async function publishProduct(id: string): Promise<ActionResult> {
 
   revalidatePath("/admin/products");
   revalidatePath("/products");
+  revalidatePath(`/products/${product.slug}`);
   return { success: true };
 }
 
 export async function unpublishProduct(id: string): Promise<ActionResult> {
   const { supabase } = await requireAdmin();
+
+  const { data: product } = await supabase
+    .from("products")
+    .select("slug")
+    .eq("id", id)
+    .single();
 
   const { error } = await supabase
     .from("products")
@@ -191,6 +195,7 @@ export async function unpublishProduct(id: string): Promise<ActionResult> {
 
   revalidatePath("/admin/products");
   revalidatePath("/products");
+  if (product?.slug) revalidatePath(`/products/${product.slug}`);
   return { success: true };
 }
 

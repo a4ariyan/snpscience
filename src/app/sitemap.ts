@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { getActiveProducts } from "@/features/products/queries";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://snpscience.com";
 
@@ -19,13 +20,23 @@ const staticRoutes = [
   "/videos",
 ] as const;
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
+  const products = await getActiveProducts();
 
-  return staticRoutes.map((path) => ({
+  const staticEntries = staticRoutes.map((path) => ({
     url: `${siteUrl}${path}`,
     lastModified,
-    changeFrequency: path === "" ? "weekly" : "monthly",
+    changeFrequency: path === "" ? ("weekly" as const) : ("monthly" as const),
     priority: path === "" ? 1 : path.startsWith("/library") || path.startsWith("/lab") ? 0.8 : 0.6,
   }));
+
+  const productEntries = products.map((product) => ({
+    url: `${siteUrl}/products/${product.slug}`,
+    lastModified: new Date(product.updated_at),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticEntries, ...productEntries];
 }

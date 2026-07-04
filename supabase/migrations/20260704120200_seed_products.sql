@@ -13,7 +13,7 @@ INSERT INTO public.products (
   description
 ) VALUES
   (
-    'bac-water',
+    'bacteriostatic-water',
     'draft',
     '{"en": "Bacteriostatic Water", "ar": "ماء بكتريوستاتيك"}'::jsonb,
     '{"en": "11 ML", "ar": "11 مل"}'::jsonb,
@@ -26,7 +26,7 @@ INSERT INTO public.products (
     NULL
   ),
   (
-    'glp3-reta',
+    'glp-3-reta',
     'draft',
     '{"en": "GLP-3 (Reta)", "ar": "GLP-3 (Reta)"}'::jsonb,
     '{"en": "10 / 30 MG", "ar": "10 / 30 مجم"}'::jsonb,
@@ -39,7 +39,7 @@ INSERT INTO public.products (
     NULL
   ),
   (
-    'glp3-reta-pen',
+    'glp-3-reta-pen',
     'draft',
     '{"en": "GLP-3 (Reta) Pen", "ar": "قلم GLP-3 (Reta)"}'::jsonb,
     '{"en": "10 MG", "ar": "10 مجم"}'::jsonb,
