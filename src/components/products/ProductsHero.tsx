@@ -28,7 +28,7 @@ export function ProductsHero({ language }: ProductsHeroProps) {
             )}
           </p>
           <h1 className="text-4xl font-light tracking-tight text-foreground md:text-5xl lg:text-6xl">
-            {t(language, "UAE Research Peptides", "ببتيدات بحثية في الإمارات")}
+            {t(language, "SNP Peptides", "ببتيدات SNP")}
           </h1>
           <p className="mt-6 text-base leading-relaxed text-muted-foreground md:text-lg">
             {t(

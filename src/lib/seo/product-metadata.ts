@@ -130,7 +130,7 @@ export function buildProductsCatalogJsonLd(
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "SNP Science Peptides",
+    name: "SNP Peptides",
     url: `${siteUrl}/products`,
     numberOfItems: products.length,
     itemListElement: products.map((product, index) => ({
@@ -146,7 +146,7 @@ const catalogDescription =
   "UAE peptides from SNP Science and SNP Research. COA included, cold-chain delivery across the UAE and GCC.";
 
 export const productsCatalogMetadata: Metadata = {
-  title: "UAE Peptides",
+  title: "SNP Peptides",
   description: catalogDescription,
   keywords: [
     "UAE peptides",
@@ -159,15 +159,15 @@ export const productsCatalogMetadata: Metadata = {
   alternates: { canonical: "/products" },
   robots: { index: true, follow: true },
   openGraph: {
-    title: "UAE Peptides | SNP Science",
+    title: "SNP Peptides | SNP",
     description: catalogDescription,
     url: `${siteUrl}/products`,
-    siteName: "SNP Science",
+    siteName: "SNP | Research on Natural Science",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "UAE Peptides | SNP Science",
+    title: "SNP Peptides | SNP",
     description: catalogDescription,
   },
 };
