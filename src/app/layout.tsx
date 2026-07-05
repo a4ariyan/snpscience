@@ -25,13 +25,13 @@ const libreBaskerville = Libre_Baskerville({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://snpscience.com"),
   title: {
-    default: "SNP Science",
-    template: "%s | SNP Science",
+    default: "SNP | Research on Natural Science",
+    template: "%s | SNP",
   },
   description:
-    "SNP research, genomics library, lab projects, and peptides in the UAE.",
+    "Research on Natural Science. SNP genomics library, lab projects, and peptides in the UAE.",
   openGraph: {
-    siteName: "SNP Science",
+    siteName: "SNP | Research on Natural Science",
     type: "website",
   },
   twitter: {
