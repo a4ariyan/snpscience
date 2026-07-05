@@ -24,18 +24,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
   const products = await getActiveProducts();
 
-  const staticEntries = staticRoutes.map((path) => ({
-    url: `${siteUrl}${path}`,
-    lastModified,
-    changeFrequency: path === "" ? ("weekly" as const) : ("monthly" as const),
-    priority: path === "" ? 1 : path.startsWith("/library") || path.startsWith("/lab") ? 0.8 : 0.6,
-  }));
-
   const productEntries = products.map((product) => ({
     url: `${siteUrl}/products/${product.slug}`,
     lastModified: new Date(product.updated_at),
     changeFrequency: "weekly" as const,
-    priority: 0.7,
+    priority: 0.85,
+  }));
+
+  const staticEntries = staticRoutes.map((path) => ({
+    url: `${siteUrl}${path}`,
+    lastModified,
+    changeFrequency: path === "" ? ("weekly" as const) : ("monthly" as const),
+    priority:
+      path === ""
+        ? 1
+        : path === "/products"
+          ? 0.9
+          : path.startsWith("/library") || path.startsWith("/lab")
+            ? 0.8
+            : 0.6,
   }));
 
   return [...staticEntries, ...productEntries];
