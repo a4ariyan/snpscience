@@ -94,8 +94,8 @@ export async function Home() {
             <p className="text-muted-foreground text-base leading-relaxed mb-8">
               {t(
                 language,
-                "SNP is dedicated to Single Nucleotide Polymorphism research. We provide a comprehensive library and a lab for research and open-source projects.",
-                "SNP مكرسة لأبحاث تعدد أشكال النوكليوتيدات المفردة. نقدم مكتبة شاملة ومختبر للأبحاث والمشاريع المفتوحة المصدر."
+                "SNP focuses on Single Nucleotide Polymorphism research. Our library and lab support open research and open-source work.",
+                "تركز SNP على أبحاث تعدد أشكال النوكليوتيدات المفردة. مكتبتنا ومختبرنا يدعمان الأبحاث المفتوحة والمشاريع مفتوحة المصدر."
               )}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">

@@ -28,7 +28,7 @@ const categories = [
   {
     title: "History",
     titleAr: "التاريخ",
-    description: "Exploring genetic and evolutionary history through SNP data.",
+    description: "Genetic and evolutionary history through SNP data.",
     descriptionAr: "استكشاف التاريخ الجيني والتطوري من خلال بيانات SNP.",
     path: "/library/history",
     icon: Clock,
@@ -46,11 +46,11 @@ export async function LibraryHub() {
             {t(language, "SNP Library", "مكتبة SNP")}
           </h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            {t(
-              language,
-              "A comprehensive collection of Single Nucleotide Polymorphism research and data",
-              "مجموعة شاملة من أبحاث وبيانات تعدد أشكال النوكليوتيدات المفردة"
-            )}
+              {t(
+                language,
+                "SNP research and data on Single Nucleotide Polymorphisms",
+                "أبحاث وبيانات SNP حول تعدد أشكال النوكليوتيدات المفردة"
+              )}
           </p>
         </div>
       </section>

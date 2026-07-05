@@ -16,8 +16,8 @@ export async function History() {
           <p className="mt-3 max-w-2xl text-muted-foreground">
             {t(
               language,
-              "Exploring genetic and evolutionary history through SNP data",
-              "استكشاف التاريخ الجيني والتطوري من خلال بيانات SNP"
+              "Genetic and evolutionary history through SNP data",
+              "التاريخ الجيني والتطوري من خلال بيانات SNP"
             )}
           </p>
         </div>

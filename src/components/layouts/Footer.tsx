@@ -18,8 +18,8 @@ export async function Footer() {
             <p className="text-muted-foreground text-sm leading-relaxed max-w-sm mb-6">
               {t(
                 language,
-                "Exploring Single Nucleotide Polymorphisms & Genomics through research and open-source projects.",
-                "استكشاف تعدد أشكال النوكليوتيدات المفردة وعلم الجينوم"
+                "SNP research on Single Nucleotide Polymorphisms and genomics.",
+                "أبحاث SNP في تعدد أشكال النوكليوتيدات المفردة وعلم الجينوم."
               )}
             </p>
             <FooterSettings />
