@@ -12,6 +12,7 @@ import { slugExists } from "./queries";
 import type { ProductFormData } from "./types";
 import { validateProductForm } from "./validation";
 import { optimizeImageForUpload } from "@/lib/image-optimize";
+import { removeProductImages } from "./storage";
 
 export type ActionResult =
   | { success: true; id?: string; message?: string }
@@ -74,7 +75,7 @@ export async function updateProduct(
 
   const { data: existing } = await supabase
     .from("products")
-    .select("status, slug, title")
+    .select("status, slug, title, images")
     .eq("id", id)
     .single();
 
@@ -84,6 +85,23 @@ export async function updateProduct(
 
   const status = keepStatus ?? existing.status;
   const slug = await uniqueSlug(formData.titleEn, id);
+
+  const previousImages: string[] = existing.images ?? [];
+  const removedImages = previousImages.filter(
+    (url: string) => !formData.images.includes(url)
+  );
+
+  if (removedImages.length > 0) {
+    try {
+      await removeProductImages(supabase, id, removedImages);
+    } catch (err) {
+      return {
+        success: false,
+        message:
+          err instanceof Error ? err.message : "Could not remove old images",
+      };
+    }
+  }
 
   const payload = formDataToInsert(formData, slug, status as "draft" | "active");
 
@@ -248,11 +266,13 @@ export async function deleteProductImage(
 ): Promise<ActionResult> {
   const { supabase } = await requireAdmin();
 
-  const baseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${PRODUCT_IMAGES_BUCKET}/`;
-  const path = imageUrl.replace(baseUrl, "");
-
-  if (path && path.startsWith(`products/${productId}/`)) {
-    await supabase.storage.from(PRODUCT_IMAGES_BUCKET).remove([path]);
+  try {
+    await removeProductImages(supabase, productId, [imageUrl]);
+  } catch (err) {
+    return {
+      success: false,
+      message: err instanceof Error ? err.message : "Could not delete image",
+    };
   }
 
   return { success: true };

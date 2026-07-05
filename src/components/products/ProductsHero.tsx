@@ -33,8 +33,8 @@ export function ProductsHero({ language }: ProductsHeroProps) {
           <p className="mt-6 text-base leading-relaxed text-muted-foreground md:text-lg">
             {t(
               language,
-              "SNP Science (SNP Research) supplies research-grade peptides across the UAE and GCC — ≥99% purity, COA provided, and cold-chain delivery.",
-              "توفّر SNP Science (SNP Research) ببتيدات بحثية عالية النقاء في الإمارات ودول الخليج — نقاء ≥99%، شهادات تحليل، وتوصيل عبر سلسلة تبريد."
+              "SNP Science peptides for the UAE and GCC. 99%+ purity, COA on every order, cold-chain delivery.",
+              "ببتيدات SNP Science في الإمارات ودول الخليج. نقاء 99%+، شهادة تحليل مع كل طلب، وتوصيل عبر سلسلة تبريد."
             )}
           </p>
         </div>
