@@ -87,7 +87,6 @@ export function ProductForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [dosageInput, setDosageInput] = useState("");
 
   const update = <K extends keyof ProductFormData>(
     key: K,
@@ -101,12 +100,26 @@ export function ProductForm({
     });
   };
 
-  const addDosage = () => {
-    const val = dosageInput.trim();
-    if (val && !form.dosageOptions.includes(val)) {
-      update("dosageOptions", [...form.dosageOptions, val]);
-      setDosageInput("");
-    }
+  const addDosageRow = () => {
+    update("dosagePricing", [...form.dosagePricing, { dosage: "", price: "" }]);
+  };
+
+  const updateDosageRow = (
+    index: number,
+    field: "dosage" | "price",
+    value: string
+  ) => {
+    const next = [...form.dosagePricing];
+    next[index] = { ...next[index], [field]: value };
+    update("dosagePricing", next);
+  };
+
+  const removeDosageRow = (index: number) => {
+    if (form.dosagePricing.length <= 1) return;
+    update(
+      "dosagePricing",
+      form.dosagePricing.filter((_, i) => i !== index)
+    );
   };
 
   const addSpec = () => {
@@ -222,7 +235,7 @@ export function ProductForm({
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <FieldLabel required>Category</FieldLabel>
             <select
@@ -257,18 +270,6 @@ export function ProductForm({
               ))}
             </select>
             <FieldError message={errors.format} />
-          </div>
-          <div>
-            <FieldLabel required>Price (AED)</FieldLabel>
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={form.price}
-              onChange={(e) => update("price", e.target.value)}
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-            <FieldError message={errors.price} />
           </div>
         </div>
 
@@ -338,89 +339,46 @@ export function ProductForm({
         </div>
       </CollapsibleSection>
 
-      <CollapsibleSection title="Dosage options">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={dosageInput}
-            onChange={(e) => setDosageInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addDosage();
-              }
-            }}
-            placeholder="e.g. 10 MG"
-            className="flex-1 rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-          <button
-            type="button"
-            onClick={addDosage}
-            className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors"
-          >
-            Add
-          </button>
-        </div>
-        {form.dosageOptions.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-3">
-            {form.dosageOptions.map((d) => (
-              <span
-                key={d}
-                className="inline-flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-sm"
-              >
-                {d}
+      <CollapsibleSection title="Dosage & pricing" defaultOpen>
+        <div className="space-y-3">
+          {form.dosagePricing.map((row, index) => (
+            <div key={index} className="flex gap-2">
+              <input
+                type="text"
+                value={row.dosage}
+                onChange={(e) => updateDosageRow(index, "dosage", e.target.value)}
+                placeholder="e.g. 10 MG"
+                className="flex-1 rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={row.price}
+                onChange={(e) => updateDosageRow(index, "price", e.target.value)}
+                placeholder="Price (AED)"
+                className="w-32 rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              {form.dosagePricing.length > 1 && (
                 <button
                   type="button"
-                  onClick={() =>
-                    update(
-                      "dosageOptions",
-                      form.dosageOptions.filter((x) => x !== d)
-                    )
-                  }
-                  className="text-muted-foreground hover:text-foreground"
+                  onClick={() => removeDosageRow(index)}
+                  className="rounded-lg border border-border px-3 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Remove dosage"
                 >
                   ×
                 </button>
-              </span>
-            ))}
-          </div>
-        )}
-      </CollapsibleSection>
-
-      <CollapsibleSection title="Lab & purity">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <FieldLabel>Purity (%)</FieldLabel>
-            <input
-              type="number"
-              min="0"
-              max="100"
-              step="0.1"
-              value={form.purityPercentage}
-              onChange={(e) => update("purityPercentage", e.target.value)}
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-            <FieldError message={errors.purityPercentage} />
-          </div>
-          <div>
-            <FieldLabel>Lab method</FieldLabel>
-            <input
-              type="text"
-              value={form.labMethod}
-              onChange={(e) => update("labMethod", e.target.value)}
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-          </div>
-        </div>
-        <div>
-          <FieldLabel>COA image URL</FieldLabel>
-          <input
-            type="url"
-            value={form.labResultsImage}
-            onChange={(e) => update("labResultsImage", e.target.value)}
-            placeholder="Upload via images or paste URL"
-            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-          />
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addDosageRow}
+            className="text-xs font-medium text-primary hover:underline"
+          >
+            + Add dosage
+          </button>
+          <FieldError message={errors.dosagePricing} />
         </div>
       </CollapsibleSection>
 

@@ -1,4 +1,4 @@
-import type { Json, LocalizedText, ProductCategory, ProductFormat, ProductRow, ProductStatus } from "@/types/supabase";
+import type { Json, LocalizedText, ProductCategory, ProductFormat, ProductRow, ProductStatus, DosagePrice } from "@/types/supabase";
 import type { ProductFormData, ProductListItem, ProductDetail } from "./types";
 import { CATEGORY_TO_FILTER, PRODUCT_CATEGORIES, PRODUCT_FORMATS } from "./constants";
 
@@ -13,14 +13,55 @@ export function parseLocalizedText(value: Json | null | undefined): LocalizedTex
   return { en: "", ar: "" };
 }
 
+export function parseDosagePricing(row: ProductRow): DosagePrice[] {
+  const raw = row.dosage_pricing;
+  if (Array.isArray(raw)) {
+    const parsed: DosagePrice[] = [];
+    for (const item of raw) {
+      if (!item || typeof item !== "object" || Array.isArray(item)) continue;
+      const obj = item as Record<string, unknown>;
+      const dosage = String(obj.dosage ?? "");
+      const price = Number(obj.price);
+      if (dosage && !Number.isNaN(price)) {
+        parsed.push({ dosage, price });
+      }
+    }
+    if (parsed.length > 0) return parsed;
+  }
+
+  if (row.dosage_options?.length) {
+    return row.dosage_options.map((d) => ({
+      dosage: d,
+      price: Number(row.price),
+    }));
+  }
+
+  return [{ dosage: "Standard", price: Number(row.price) }];
+}
+
+export function minDosagePrice(pricing: DosagePrice[]): number {
+  return Math.min(...pricing.map((p) => p.price));
+}
+
+function parseDosagePricingInput(data: ProductFormData): DosagePrice[] {
+  return data.dosagePricing
+    .filter((d) => d.dosage.trim())
+    .map((d) => ({
+      dosage: d.dosage.trim(),
+      price: parseFloat(d.price),
+    }))
+    .filter((d) => !Number.isNaN(d.price) && d.price >= 0);
+}
+
 export function rowToListItem(row: ProductRow): ProductListItem {
+  const pricing = parseDosagePricing(row);
   return {
     id: row.id,
     slug: row.slug,
     status: row.status as ProductStatus,
     title: parseLocalizedText(row.title),
     category: row.category as ProductCategory,
-    price: Number(row.price),
+    price: minDosagePrice(pricing),
     currency: row.currency,
     stockStatus: row.stock_status,
     format: row.format as ProductFormat | null,
@@ -31,6 +72,7 @@ export function rowToListItem(row: ProductRow): ProductListItem {
 
 export function rowToFormData(row: ProductRow): ProductFormData {
   const specs = parseSpecs(row);
+  const pricing = parseDosagePricing(row);
 
   return {
     titleEn: parseLocalizedText(row.title).en,
@@ -39,13 +81,12 @@ export function rowToFormData(row: ProductRow): ProductFormData {
     subtitleAr: parseLocalizedText(row.subtitle).ar,
     category: row.category as ProductFormData["category"],
     format: (row.format as ProductFormData["format"]) ?? "",
-    price: String(row.price),
     stockStatus: row.stock_status,
-    dosageOptions: row.dosage_options ?? [],
+    dosagePricing:
+      pricing.length > 0
+        ? pricing.map((p) => ({ dosage: p.dosage, price: String(p.price) }))
+        : [{ dosage: "", price: "" }],
     images: row.images ?? [],
-    labResultsImage: row.lab_results_image ?? "",
-    purityPercentage: row.purity_percentage != null ? String(row.purity_percentage) : "",
-    labMethod: row.lab_method ?? "",
     descriptionEn: parseLocalizedText(row.description).en,
     descriptionAr: parseLocalizedText(row.description).ar,
     activeIngredients: row.active_ingredients ?? "",
@@ -69,6 +110,9 @@ export function formDataToInsert(
         )
       : null;
 
+  const pricing = parseDosagePricingInput(data);
+  const minPrice = pricing.length > 0 ? minDosagePrice(pricing) : 0;
+
   return {
     slug,
     status,
@@ -78,17 +122,13 @@ export function formDataToInsert(
         ? { en: data.subtitleEn.trim(), ar: data.subtitleAr.trim() }
         : null,
     category: data.category,
-    price: parseFloat(data.price),
+    price: minPrice,
     currency: "AED",
     stock_status: data.stockStatus,
-    dosage_options: data.dosageOptions.length > 0 ? data.dosageOptions : null,
+    dosage_options: pricing.length > 0 ? pricing.map((p) => p.dosage) : null,
+    dosage_pricing: pricing.length > 0 ? pricing : null,
     format: data.format || null,
     images: data.images,
-    lab_results_image: data.labResultsImage.trim() || null,
-    purity_percentage: data.purityPercentage
-      ? parseFloat(data.purityPercentage)
-      : null,
-    lab_method: data.labMethod.trim() || null,
     description:
       data.descriptionEn.trim() || data.descriptionAr.trim()
         ? { en: data.descriptionEn.trim(), ar: data.descriptionAr.trim() }
@@ -129,6 +169,7 @@ function formatLabels(format: ProductFormat) {
 export function rowToProductDetail(row: ProductRow): ProductDetail {
   const category = row.category as ProductCategory;
   const format = (row.format as ProductFormat) ?? "vial";
+  const dosagePricing = parseDosagePricing(row);
 
   return {
     id: row.id,
@@ -140,14 +181,10 @@ export function rowToProductDetail(row: ProductRow): ProductDetail {
     ...categoryLabels(category),
     format,
     ...formatLabels(format),
-    price: Number(row.price),
     currency: row.currency,
     stockStatus: row.stock_status,
-    dosageOptions: row.dosage_options ?? [],
+    dosagePricing,
     images: row.images ?? [],
-    labResultsImage: row.lab_results_image,
-    purityPercentage: row.purity_percentage != null ? Number(row.purity_percentage) : null,
-    labMethod: row.lab_method,
     activeIngredients: row.active_ingredients,
     commonUses: row.common_uses,
     specs: parseSpecs(row),
@@ -158,8 +195,9 @@ export function rowToProductDetail(row: ProductRow): ProductDetail {
 export function rowToCatalogProduct(row: ProductRow): import("./types").CatalogProduct {
   const title = parseLocalizedText(row.title);
   const subtitle = parseLocalizedText(row.subtitle);
-  const sizeEn = subtitle.en || (row.dosage_options?.[0] ?? "");
-  const sizeAr = subtitle.ar || (row.dosage_options?.[0] ?? "");
+  const pricing = parseDosagePricing(row);
+  const sizeEn = subtitle.en || pricing[0]?.dosage || "";
+  const sizeAr = subtitle.ar || pricing[0]?.dosage || "";
   const category = row.category as ProductCategory;
   const labels = categoryLabels(category);
 
@@ -170,8 +208,8 @@ export function rowToCatalogProduct(row: ProductRow): import("./types").CatalogP
     nameAr: title.ar,
     sizeEn,
     sizeAr,
-    priceAed: Number(row.price),
-    priceFrom: (row.dosage_options?.length ?? 0) > 1,
+    priceAed: minDosagePrice(pricing),
+    priceFrom: pricing.length > 1,
     rating: null,
     reviewCount: 0,
     categories: [CATEGORY_TO_FILTER[category]],

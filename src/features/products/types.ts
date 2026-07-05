@@ -1,5 +1,10 @@
 import type { LocalizedText, ProductRow } from "@/types/supabase";
-import type { ProductCategory, ProductFormat } from "@/types/supabase";
+import type { DosagePrice, ProductCategory, ProductFormat } from "@/types/supabase";
+
+export interface DosagePriceInput {
+  dosage: string;
+  price: string;
+}
 
 export interface ProductFormData {
   titleEn: string;
@@ -8,13 +13,9 @@ export interface ProductFormData {
   subtitleAr: string;
   category: ProductCategory;
   format: ProductFormat | "";
-  price: string;
   stockStatus: boolean;
-  dosageOptions: string[];
+  dosagePricing: DosagePriceInput[];
   images: string[];
-  labResultsImage: string;
-  purityPercentage: string;
-  labMethod: string;
   descriptionEn: string;
   descriptionAr: string;
   activeIngredients: string;
@@ -68,14 +69,10 @@ export interface ProductDetail {
   format: ProductFormat;
   formatLabelEn: string;
   formatLabelAr: string;
-  price: number;
   currency: string;
   stockStatus: boolean;
-  dosageOptions: string[];
+  dosagePricing: DosagePrice[];
   images: string[];
-  labResultsImage: string | null;
-  purityPercentage: number | null;
-  labMethod: string | null;
   activeIngredients: string | null;
   commonUses: string | null;
   specs: { key: string; value: string }[];
@@ -90,13 +87,9 @@ export function emptyProductForm(): ProductFormData {
     subtitleAr: "",
     category: "Recovery & Repair",
     format: "vial",
-    price: "",
     stockStatus: true,
-    dosageOptions: [],
+    dosagePricing: [{ dosage: "", price: "" }],
     images: [],
-    labResultsImage: "",
-    purityPercentage: "",
-    labMethod: "",
     descriptionEn: "",
     descriptionAr: "",
     activeIngredients: "",

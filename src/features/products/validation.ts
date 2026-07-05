@@ -23,9 +23,17 @@ export function validateProductForm(
     errors.category = "Category is required";
   }
 
-  const price = parseFloat(data.price);
-  if (!data.price.trim() || Number.isNaN(price) || price < 0) {
-    errors.price = "Valid price is required";
+  const validDosages = data.dosagePricing.filter((d) => d.dosage.trim());
+  if (validDosages.length === 0) {
+    errors.dosagePricing = "At least one dosage with price is required";
+  } else {
+    for (const row of validDosages) {
+      const price = parseFloat(row.price);
+      if (!row.price.trim() || Number.isNaN(price) || price < 0) {
+        errors.dosagePricing = "Each dosage needs a valid price";
+        break;
+      }
+    }
   }
 
   if (forPublish && !data.format) {
@@ -38,13 +46,6 @@ export function validateProductForm(
 
   if (data.images.length > MAX_PRODUCT_IMAGES) {
     errors.images = `Maximum ${MAX_PRODUCT_IMAGES} images allowed`;
-  }
-
-  if (data.purityPercentage) {
-    const purity = parseFloat(data.purityPercentage);
-    if (Number.isNaN(purity) || purity < 0 || purity > 100) {
-      errors.purityPercentage = "Purity must be between 0 and 100";
-    }
   }
 
   if (Object.keys(errors).length > 0) {

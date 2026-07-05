@@ -43,30 +43,28 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
   const { language } = useLanguage();
   const { addItem } = useCart();
 
-  const defaultDosage =
-    product.dosageOptions[0] ??
-    (language === "ar" ? product.subtitle.ar : product.subtitle.en) ??
-    "";
-
-  const [dosage, setDosage] = useState(defaultDosage);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [added, setAdded] = useState(false);
 
+  const selected = product.dosagePricing[selectedIndex] ?? product.dosagePricing[0];
   const title = t(language, product.title.en, product.title.ar);
   const description = t(language, product.description.en, product.description.ar);
   const category = t(language, product.categoryLabelEn, product.categoryLabelAr);
   const format = t(language, product.formatLabelEn, product.formatLabelAr);
 
-  const priceLabel = `${product.price.toFixed(2)} ${product.currency}`;
+  const priceLabel = selected
+    ? `${selected.price.toFixed(2)} ${product.currency}`
+    : "";
 
   const handleAddToCart = () => {
-    if (!product.stockStatus) return;
+    if (!product.stockStatus || !selected) return;
     addItem({
       productId: product.id,
       slug: product.slug,
       nameEn: product.title.en,
       nameAr: product.title.ar,
-      dosage,
-      price: product.price,
+      dosage: selected.dosage,
+      price: selected.price,
       image: product.images[0],
     });
     setAdded(true);
@@ -127,25 +125,28 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
             })}
           </div>
 
-          {product.dosageOptions.length > 1 && (
+          {product.dosagePricing.length > 1 && (
             <div className="mt-6">
               <p className="mb-2 text-sm font-medium text-foreground">
                 {t(language, "Dosage", "الجرعة")}
               </p>
               <div className="flex flex-wrap gap-2">
-                {product.dosageOptions.map((option) => (
+                {product.dosagePricing.map((option, index) => (
                   <button
-                    key={option}
+                    key={option.dosage}
                     type="button"
-                    onClick={() => setDosage(option)}
+                    onClick={() => setSelectedIndex(index)}
                     className={cn(
                       "rounded-full px-4 py-2 text-sm font-medium transition-colors",
-                      dosage === option
+                      selectedIndex === index
                         ? "bg-foreground text-background"
                         : "border border-border bg-card text-foreground hover:bg-muted"
                     )}
                   >
-                    {option}
+                    <span>{option.dosage}</span>
+                    <span className="ml-2 opacity-70">
+                      {option.price.toFixed(2)} {product.currency}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -211,56 +212,6 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
               </SectionCard>
             )}
           </div>
-        )}
-
-        {(product.purityPercentage != null ||
-          product.labMethod ||
-          product.labResultsImage) && (
-          <SectionCard title={t(language, "Lab & purity", "المختبر والنقاء")}>
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Shield className="h-5 w-5" />
-              </div>
-              <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  {product.purityPercentage != null && (
-                    <p>
-                      {t(language, "Purity", "النقاء")}:{" "}
-                      <span className="font-medium text-foreground">
-                        {product.purityPercentage}%
-                      </span>
-                    </p>
-                  )}
-                  {product.labMethod && (
-                    <p>
-                      {t(language, "Method", "الطريقة")}:{" "}
-                      <span className="font-medium text-foreground">
-                        {product.labMethod}
-                      </span>
-                    </p>
-                  )}
-                </div>
-                {product.labResultsImage && (
-                  <a
-                    href={product.labResultsImage}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="relative block h-32 w-32 shrink-0 overflow-hidden rounded-xl border border-border"
-                  >
-                    <img
-                      src={product.labResultsImage}
-                      alt={t(
-                        language,
-                        "Certificate of analysis",
-                        "شهادة التحليل"
-                      )}
-                      className="h-full w-full object-cover"
-                    />
-                  </a>
-                )}
-              </div>
-            </div>
-          </SectionCard>
         )}
 
         {product.specs.length > 0 && (

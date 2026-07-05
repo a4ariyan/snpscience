@@ -6,7 +6,7 @@ import {
   MAX_IMAGE_SIZE_BYTES,
   PRODUCT_IMAGES_BUCKET,
 } from "./constants";
-import { formDataToInsert, slugify } from "./mappers";
+import { formDataToInsert, rowToFormData, slugify } from "./mappers";
 import { slugExists } from "./queries";
 import type { ProductFormData } from "./types";
 import { validateProductForm } from "./validation";
@@ -125,28 +125,7 @@ export async function publishProduct(id: string): Promise<ActionResult> {
     return { success: false, message: "Product not found" };
   }
 
-  const formData = {
-    titleEn: product.title.en,
-    titleAr: product.title.ar,
-    subtitleEn: product.subtitle?.en ?? "",
-    subtitleAr: product.subtitle?.ar ?? "",
-    category: product.category,
-    format: product.format ?? "",
-    price: String(product.price),
-    stockStatus: product.stock_status,
-    dosageOptions: product.dosage_options ?? [],
-    images: product.images ?? [],
-    labResultsImage: product.lab_results_image ?? "",
-    purityPercentage:
-      product.purity_percentage != null ? String(product.purity_percentage) : "",
-    labMethod: product.lab_method ?? "",
-    descriptionEn: product.description?.en ?? "",
-    descriptionAr: product.description?.ar ?? "",
-    activeIngredients: product.active_ingredients ?? "",
-    commonUses: product.common_uses ?? "",
-    specs: [],
-    disclaimer: product.disclaimer ?? "",
-  };
+  const formData = rowToFormData(product);
 
   const validation = validateProductForm(formData, true);
   if (!validation.success) {
@@ -212,7 +191,7 @@ export async function uploadProductImage(
   }
 
   if (file.size > MAX_IMAGE_SIZE_BYTES) {
-    return { success: false, message: "Image must be under 5MB" };
+    return { success: false, message: "Image must be under 1MB" };
   }
 
   if (!file.type.startsWith("image/")) {

@@ -71,7 +71,7 @@ export const FILTER_TO_CATEGORY: Record<string, ProductCategory> =
 
 export const PRODUCT_IMAGES_BUCKET = "product-images";
 export const MAX_PRODUCT_IMAGES = 5;
-export const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+export const MAX_IMAGE_SIZE_BYTES = 1024 * 1024;
 
 export const DEFAULT_DISCLAIMER =
   "For laboratory research use only. Not for human consumption.";

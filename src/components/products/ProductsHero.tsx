@@ -28,13 +28,13 @@ export function ProductsHero({ language }: ProductsHeroProps) {
             )}
           </p>
           <h1 className="text-4xl font-light tracking-tight text-foreground md:text-5xl lg:text-6xl">
-            {t(language, "Research Peptides", "ببتيدات بحثية")}
+            {t(language, "UAE Research Peptides", "ببتيدات بحثية في الإمارات")}
           </h1>
           <p className="mt-6 text-base leading-relaxed text-muted-foreground md:text-lg">
             {t(
               language,
-              "High-purity research peptides with ≥99% purity, COA provided, and cold-chain delivery across the UAE and GCC.",
-              "ببتيدات بحثية عالية النقاء بنسبة ≥99%، مع شهادات تحليل وتوصيل عبر سلسلة تبريد في الإمارات ودول الخليج."
+              "SNP Science (SNP Research) supplies research-grade peptides across the UAE and GCC — ≥99% purity, COA provided, and cold-chain delivery.",
+              "توفّر SNP Science (SNP Research) ببتيدات بحثية عالية النقاء في الإمارات ودول الخليج — نقاء ≥99%، شهادات تحليل، وتوصيل عبر سلسلة تبريد."
             )}
           </p>
         </div>

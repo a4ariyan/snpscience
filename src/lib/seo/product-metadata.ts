@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ProductRow } from "@/types/supabase";
-import { parseLocalizedText } from "@/features/products/mappers";
+import { parseLocalizedText, parseDosagePricing, minDosagePrice } from "@/features/products/mappers";
 import { PRODUCT_PLACEHOLDER_IMAGE } from "@/shared/products-content";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://snpscience.com";
@@ -9,7 +9,7 @@ function productDescription(row: ProductRow, name: string): string {
   const description = parseLocalizedText(row.description);
   if (description.en) return description.en;
 
-  return `${name} — research-grade peptide with ≥99% purity, COA provided, and cold-chain delivery across the UAE and GCC.`;
+  return `${name} — research-grade peptide from SNP Science (SNP Research), with cold-chain delivery across the UAE and GCC.`;
 }
 
 export function buildProductMetadata(row: ProductRow): Metadata {
@@ -21,7 +21,7 @@ export function buildProductMetadata(row: ProductRow): Metadata {
     row.images?.[0] ?? `${siteUrl}${PRODUCT_PLACEHOLDER_IMAGE}`;
 
   return {
-    title: `${name} | SNP Science`,
+    title: `${name} | SNP Science Peptides UAE`,
     description,
     alternates: { canonical: `/products/${row.slug}` },
     robots: { index: true, follow: true },
@@ -51,6 +51,33 @@ export function buildProductJsonLd(row: ProductRow): Record<string, unknown> {
       ? row.images
       : [`${siteUrl}${PRODUCT_PLACEHOLDER_IMAGE}`];
 
+  const pricing = parseDosagePricing(row);
+  const prices = pricing.map((p) => p.price);
+  const min = minDosagePrice(pricing);
+  const max = Math.max(...prices);
+
+  const availability = row.stock_status
+    ? "https://schema.org/InStock"
+    : "https://schema.org/OutOfStock";
+
+  const offers =
+    prices.length > 1
+      ? {
+          "@type": "AggregateOffer",
+          lowPrice: min.toFixed(2),
+          highPrice: max.toFixed(2),
+          priceCurrency: row.currency,
+          availability,
+          url: `${siteUrl}/products/${row.slug}`,
+        }
+      : {
+          "@type": "Offer",
+          price: min.toFixed(2),
+          priceCurrency: row.currency,
+          availability,
+          url: `${siteUrl}/products/${row.slug}`,
+        };
+
   return {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -63,36 +90,36 @@ export function buildProductJsonLd(row: ProductRow): Record<string, unknown> {
       "@type": "Brand",
       name: "SNP Science",
     },
-    offers: {
-      "@type": "Offer",
-      price: Number(row.price).toFixed(2),
-      priceCurrency: row.currency,
-      availability: row.stock_status
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
-      url: `${siteUrl}/products/${row.slug}`,
-    },
+    offers,
   };
 }
 
+const catalogDescription =
+  "Buy UAE peptides from SNP Science (SNP Research). Research-grade snpscience peptides with COA, cold-chain delivery across the UAE and GCC.";
+
 export const productsCatalogMetadata: Metadata = {
-  title: "Our Products | SNP Science",
-  description:
-    "Research-grade peptides with ≥99% purity, COA provided, and cold-chain delivery across the UAE and GCC.",
+  title: "UAE Peptides | SNP Science & SNP Research",
+  description: catalogDescription,
+  keywords: [
+    "UAE peptides",
+    "snpscience peptides",
+    "snpresearch",
+    "SNP Science peptides",
+    "peptides UAE",
+    "research peptides Dubai",
+  ],
   alternates: { canonical: "/products" },
   robots: { index: true, follow: true },
   openGraph: {
-    title: "Our Products | SNP Science",
-    description:
-      "Research-grade peptides with ≥99% purity, COA provided, and cold-chain delivery across the UAE and GCC.",
+    title: "UAE Peptides | SNP Science & SNP Research",
+    description: catalogDescription,
     url: `${siteUrl}/products`,
     siteName: "SNP Science",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Our Products | SNP Science",
-    description:
-      "Research-grade peptides with ≥99% purity, COA provided, and cold-chain delivery across the UAE and GCC.",
+    title: "UAE Peptides | SNP Science & SNP Research",
+    description: catalogDescription,
   },
 };

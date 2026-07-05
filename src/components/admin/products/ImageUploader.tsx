@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { ImagePlus, Loader2, X } from "lucide-react";
 import { uploadProductImage } from "@/features/products/actions";
 import { MAX_PRODUCT_IMAGES } from "@/features/products/constants";
+import { compressImage } from "@/lib/image-compress";
 import { cn } from "@/lib/utils";
 
 interface ImageUploaderProps {
@@ -38,8 +39,18 @@ export function ImageUploader({
     const newUrls: string[] = [];
 
     for (let i = 0; i < Math.min(files.length, remaining); i++) {
+      let file = files[i];
+      try {
+        file = await compressImage(file);
+      } catch (err) {
+        setUploadError(
+          err instanceof Error ? err.message : "Image compression failed"
+        );
+        break;
+      }
+
       const formData = new FormData();
-      formData.append("file", files[i]);
+      formData.append("file", file);
       formData.append("productId", productId);
 
       const result = await uploadProductImage(formData);
@@ -124,7 +135,8 @@ export function ImageUploader({
       )}
 
       <p className="text-xs text-muted-foreground">
-        JPG, PNG or WebP. Max 5MB each. Up to {MAX_PRODUCT_IMAGES} images.
+        JPG, PNG or WebP. Auto-compressed under 1MB. Up to {MAX_PRODUCT_IMAGES}{" "}
+        images.
       </p>
     </div>
   );

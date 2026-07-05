@@ -24,6 +24,7 @@ export type Database = {
           description: Json | null
           disclaimer: string | null
           dosage_options: string[] | null
+          dosage_pricing: Json | null
           format: string | null
           id: string
           images: string[] | null
@@ -49,6 +50,7 @@ export type Database = {
           description?: Json | null
           disclaimer?: string | null
           dosage_options?: string[] | null
+          dosage_pricing?: Json | null
           format?: string | null
           id?: string
           images?: string[] | null
@@ -74,6 +76,7 @@ export type Database = {
           description?: Json | null
           disclaimer?: string | null
           dosage_options?: string[] | null
+          dosage_pricing?: Json | null
           format?: string | null
           id?: string
           images?: string[] | null
@@ -302,6 +305,11 @@ export type ProductCategory =
   | "Growth & Body";
 
 export type ProductFormat = "vial" | "pen" | "spray";
+
+export interface DosagePrice {
+  dosage: string;
+  price: number;
+}
 
 export interface LocalizedText {
   en: string;
