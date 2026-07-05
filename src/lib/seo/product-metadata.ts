@@ -1,15 +1,20 @@
 import type { Metadata } from "next";
 import type { ProductRow } from "@/types/supabase";
-import { parseLocalizedText, parseDosagePricing, minDosagePrice } from "@/features/products/mappers";
+import {
+  parseLocalizedText,
+  parseDosagePricing,
+  minDosagePrice,
+} from "@/features/products/mappers";
 import { PRODUCT_PLACEHOLDER_IMAGE } from "@/shared/products-content";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://snpscience.com";
+export const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://snpscience.com";
 
 function productDescription(row: ProductRow, name: string): string {
   const description = parseLocalizedText(row.description);
-  if (description.en) return description.en;
+  if (description.en) return description.en.slice(0, 160);
 
-  return `${name} — research-grade peptide from SNP Science (SNP Research), with cold-chain delivery across the UAE and GCC.`;
+  return `${name} from SNP Science. Peptides for the UAE and GCC with COA and cold-chain delivery.`;
 }
 
 export function buildProductMetadata(row: ProductRow): Metadata {
@@ -21,7 +26,7 @@ export function buildProductMetadata(row: ProductRow): Metadata {
     row.images?.[0] ?? `${siteUrl}${PRODUCT_PLACEHOLDER_IMAGE}`;
 
   return {
-    title: `${name} | SNP Science Peptides UAE`,
+    title: name,
     description,
     alternates: { canonical: `/products/${row.slug}` },
     robots: { index: true, follow: true },
@@ -94,11 +99,54 @@ export function buildProductJsonLd(row: ProductRow): Record<string, unknown> {
   };
 }
 
+export function buildProductBreadcrumbJsonLd(
+  row: ProductRow
+): Record<string, unknown> {
+  const name = parseLocalizedText(row.title).en || "Product";
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Products",
+        item: `${siteUrl}/products`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name,
+        item: `${siteUrl}/products/${row.slug}`,
+      },
+    ],
+  };
+}
+
+export function buildProductsCatalogJsonLd(
+  products: { slug: string; nameEn: string }[]
+): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "SNP Science Peptides",
+    url: `${siteUrl}/products`,
+    numberOfItems: products.length,
+    itemListElement: products.map((product, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: product.nameEn,
+      url: `${siteUrl}/products/${product.slug}`,
+    })),
+  };
+}
+
 const catalogDescription =
-  "Buy UAE peptides from SNP Science (SNP Research). Research-grade snpscience peptides with COA, cold-chain delivery across the UAE and GCC.";
+  "UAE peptides from SNP Science and SNP Research. COA included, cold-chain delivery across the UAE and GCC.";
 
 export const productsCatalogMetadata: Metadata = {
-  title: "UAE Peptides | SNP Science & SNP Research",
+  title: "UAE Peptides",
   description: catalogDescription,
   keywords: [
     "UAE peptides",
@@ -106,12 +154,12 @@ export const productsCatalogMetadata: Metadata = {
     "snpresearch",
     "SNP Science peptides",
     "peptides UAE",
-    "research peptides Dubai",
+    "peptides Dubai",
   ],
   alternates: { canonical: "/products" },
   robots: { index: true, follow: true },
   openGraph: {
-    title: "UAE Peptides | SNP Science & SNP Research",
+    title: "UAE Peptides | SNP Science",
     description: catalogDescription,
     url: `${siteUrl}/products`,
     siteName: "SNP Science",
@@ -119,7 +167,7 @@ export const productsCatalogMetadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "UAE Peptides | SNP Science & SNP Research",
+    title: "UAE Peptides | SNP Science",
     description: catalogDescription,
   },
 };

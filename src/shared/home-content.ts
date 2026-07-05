@@ -10,9 +10,9 @@ export const mainSections = [
     title: "Our Library",
     titleAr: "مكتبة SNP",
     description:
-      "Population genomics, human health, and comprehensive SNP research data",
+      "Population genomics, human health, and SNP research data",
     descriptionAr:
-      "علم الجينوم السكاني والصحة البشرية وبيانات أبحاث SNP الشاملة",
+      "علم الجينوم السكاني والصحة البشرية وبيانات أبحاث SNP",
     path: "/library",
     icon: BookOpen,
   },
@@ -27,8 +27,8 @@ export const mainSections = [
   {
     title: "Our Products",
     titleAr: "منتجاتنا",
-    description: "Research-grade peptides — purity, quality, and potential",
-    descriptionAr: "ببتيدات بحثية — نقاء وجودة وإمكانات",
+    description: "Peptides for research. Purity, quality, and clear specs.",
+    descriptionAr: "ببتيدات للأبحاث. نقاء وجودة ومواصفات واضحة.",
     path: "/products",
     icon: FlaskConical,
   },
