@@ -135,8 +135,8 @@ export function ImageUploader({
       )}
 
       <p className="text-xs text-muted-foreground">
-        JPG, PNG or WebP. Auto-compressed under 1MB. Up to {MAX_PRODUCT_IMAGES}{" "}
-        images.
+        JPG, PNG or WebP. Converted to WebP on upload (max 2MB). Up to{" "}
+        {MAX_PRODUCT_IMAGES} images.
       </p>
     </div>
   );

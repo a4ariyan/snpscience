@@ -4,12 +4,14 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import {
   MAX_IMAGE_SIZE_BYTES,
+  MAX_IMAGE_UPLOAD_BYTES,
   PRODUCT_IMAGES_BUCKET,
 } from "./constants";
 import { formDataToInsert, rowToFormData, slugify } from "./mappers";
 import { slugExists } from "./queries";
 import type { ProductFormData } from "./types";
 import { validateProductForm } from "./validation";
+import { optimizeImageForUpload } from "@/lib/image-optimize";
 
 export type ActionResult =
   | { success: true; id?: string; message?: string }
@@ -190,25 +192,41 @@ export async function uploadProductImage(
     return { success: false, message: "File and product ID are required" };
   }
 
-  if (file.size > MAX_IMAGE_SIZE_BYTES) {
-    return { success: false, message: "Image must be under 1MB" };
+  if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
+    return {
+      success: false,
+      message: `Image must be under ${MAX_IMAGE_UPLOAD_BYTES / (1024 * 1024)}MB`,
+    };
   }
 
   if (!file.type.startsWith("image/")) {
     return { success: false, message: "File must be an image" };
   }
 
-  const ext = file.name.split(".").pop() ?? "jpg";
-  const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-  const path = `products/${productId}/${filename}`;
+  const inputBuffer = Buffer.from(await file.arrayBuffer());
 
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = new Uint8Array(arrayBuffer);
+  let optimized;
+  try {
+    optimized = await optimizeImageForUpload(inputBuffer);
+  } catch (err) {
+    return {
+      success: false,
+      message:
+        err instanceof Error ? err.message : "Image optimization failed",
+    };
+  }
+
+  if (optimized.buffer.length > MAX_IMAGE_SIZE_BYTES) {
+    return { success: false, message: "Optimized image must be under 2MB" };
+  }
+
+  const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${optimized.extension}`;
+  const path = `products/${productId}/${filename}`;
 
   const { error: uploadError } = await supabase.storage
     .from(PRODUCT_IMAGES_BUCKET)
-    .upload(path, buffer, {
-      contentType: file.type,
+    .upload(path, optimized.buffer, {
+      contentType: optimized.contentType,
       upsert: false,
     });
 
