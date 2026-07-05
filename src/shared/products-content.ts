@@ -58,8 +58,8 @@ export const productFormats = [
 export const trustBadges = [
   {
     id: "purity",
-    labelEn: "Lab-tested ≥99%",
-    labelAr: "مختبر بنقاء ≥99%",
+    labelEn: "99%+ lab-tested",
+    labelAr: "مختبر 99%+",
     descriptionEn: "Third-party verified purity",
     descriptionAr: "نقاء موثق من طرف ثالث",
   },

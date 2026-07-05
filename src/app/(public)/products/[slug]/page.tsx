@@ -4,6 +4,7 @@ import { ProductDetailView } from "@/components/products/ProductDetailView";
 import { rowToProductDetail } from "@/features/products/mappers";
 import { getActiveProductBySlug } from "@/features/products/queries";
 import {
+  buildProductBreadcrumbJsonLd,
   buildProductJsonLd,
   buildProductMetadata,
 } from "@/lib/seo/product-metadata";
@@ -26,7 +27,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!row) notFound();
 
   const product = rowToProductDetail(row);
-  const jsonLd = buildProductJsonLd(row);
+  const jsonLd = [buildProductJsonLd(row), buildProductBreadcrumbJsonLd(row)];
 
   return (
     <PublicPage>
