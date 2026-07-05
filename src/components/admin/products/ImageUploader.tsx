@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { ImagePlus, Loader2, X } from "lucide-react";
-import { uploadProductImage } from "@/features/products/actions";
+import { uploadProductImage, deleteProductImage } from "@/features/products/actions";
 import { MAX_PRODUCT_IMAGES } from "@/features/products/constants";
 import { compressImage } from "@/lib/image-compress";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,7 @@ export function ImageUploader({
 }: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [removingUrl, setRemovingUrl] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleFiles = async (files: FileList | null) => {
@@ -70,7 +71,19 @@ export function ImageUploader({
     if (inputRef.current) inputRef.current.value = "";
   };
 
-  const removeImage = (index: number) => {
+  const removeImage = async (index: number) => {
+    const url = images[index];
+    setUploadError(null);
+    setRemovingUrl(url);
+
+    const result = await deleteProductImage(productId, url);
+    setRemovingUrl(null);
+
+    if (!result.success) {
+      setUploadError(result.message ?? "Could not remove image from storage");
+      return;
+    }
+
     onChange(images.filter((_, i) => i !== index));
   };
 
@@ -86,10 +99,15 @@ export function ImageUploader({
             <button
               type="button"
               onClick={() => removeImage(index)}
-              className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+              disabled={removingUrl === url}
+              className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-100"
               aria-label="Remove image"
             >
-              <X className="h-3.5 w-3.5" />
+              {removingUrl === url ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <X className="h-3.5 w-3.5" />
+              )}
             </button>
             {index === 0 && (
               <span className="absolute bottom-1 left-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">
