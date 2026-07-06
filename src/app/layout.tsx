@@ -25,7 +25,7 @@ const libreBaskerville = Libre_Baskerville({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://snpscience.com"),
   title: {
-    default: "SNP | Research on Natural Science",
+    default: "SNP | Research on Natural Science.",
     template: "%s | SNP",
   },
   description:
