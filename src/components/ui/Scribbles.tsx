@@ -34,6 +34,32 @@ export function ScribbleUnderline({
   );
 }
 
+export function ScribbleSparkle({
+  className,
+  delay = 0.5,
+}: {
+  className?: string;
+  delay?: number;
+}) {
+  return (
+    <motion.svg
+      initial={{ pathLength: 0, opacity: 0, scale: 0.5, rotate: -15 }}
+      whileInView={{ pathLength: 1, opacity: 1, scale: 1, rotate: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.8, ease: "easeOut", delay }}
+      className={`absolute pointer-events-none text-primary ${className || ""}`}
+      viewBox="0 0 50 50"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M25,5 Q25,25 5,25 Q25,25 25,45 Q25,25 45,25 Q25,25 25,5 Z" />
+    </motion.svg>
+  );
+}
+
 export function ScribbleCircle({
   children,
   className,
