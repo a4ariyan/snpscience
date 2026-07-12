@@ -25,9 +25,8 @@ interface TeamMemberCardProps {
 }
 
 export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
-  const [expanded, setExpanded] = useState(false);
+  const [showBio, setShowBio] = useState(false);
 
-  const motto = t(language, member.motto, member.mottoAr);
   const quote = t(language, member.quote, member.quoteAr);
   const bio = t(language, member.bio, member.bioAr);
   const name = t(language, member.name, member.nameAr);
@@ -35,13 +34,13 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
 
   return (
     <article 
-      className="flex flex-col items-center text-center rounded-2xl border border-border/50 bg-card p-8 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+      className="flex flex-col items-center text-center rounded-3xl border border-border/40 bg-card p-8 sm:p-10 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
       itemScope 
       itemType="https://schema.org/Person"
     >
       <div
         className={cn(
-          "relative mb-5 flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br text-3xl font-light text-white shadow-inner",
+          "relative mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br text-3xl font-light text-white shadow-inner",
           member.accent
         )}
         aria-hidden
@@ -50,10 +49,10 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
         <div className="absolute inset-0 rounded-full bg-primary/10 mix-blend-overlay" />
       </div>
 
-      <h2 className="text-xl font-semibold text-foreground tracking-tight" itemProp="name">
+      <h2 className="text-xl font-medium text-foreground tracking-tight" itemProp="name">
         {name}
       </h2>
-      <p className="mt-1.5 text-sm font-medium text-primary tracking-wide uppercase" itemProp="jobTitle">
+      <p className="mt-1.5 text-sm text-primary tracking-wide" itemProp="jobTitle">
         {role}
       </p>
 
@@ -62,7 +61,7 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
           href={member.linkedin}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-3 inline-flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
+          className="mt-4 text-muted-foreground hover:text-primary transition-colors"
           aria-label={`${name} on LinkedIn`}
           itemProp="sameAs"
         >
@@ -70,49 +69,30 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
         </a>
       )}
 
-      <div className="mt-6 w-full pt-6 border-t border-border/60 flex-1 flex flex-col">
-        <div className="flex-1">
-          <h3 className="text-sm font-semibold text-foreground mb-3">
-            {motto}
-          </h3>
-          <blockquote className="text-sm leading-relaxed text-muted-foreground italic">
-            &ldquo;{quote}&rdquo;
-          </blockquote>
-        </div>
+      <div className="w-10 h-px bg-border my-6" aria-hidden />
 
-        <div 
-          className={cn(
-            "grid transition-all duration-300 ease-in-out mt-4",
-            expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-          )}
-        >
-          <div className="overflow-hidden">
-            <p className="text-sm leading-relaxed text-muted-foreground text-left pb-4 border-t border-border/40 pt-4 mt-2">
-              {bio}
-            </p>
-          </div>
+      <div className="flex-1 w-full flex flex-col justify-between">
+        <div className="relative min-h-[140px] flex items-center justify-center">
+          <p 
+            key={showBio ? "bio" : "quote"}
+            className="text-sm leading-relaxed text-muted-foreground animate-in fade-in slide-in-from-bottom-2 duration-300"
+          >
+            {showBio ? (
+              bio
+            ) : (
+              <span className="italic">&ldquo;{quote}&rdquo;</span>
+            )}
+          </p>
         </div>
 
         <button
           type="button"
-          onClick={() => setExpanded(!expanded)}
-          className="mt-2 text-sm font-medium text-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5 justify-center group"
-          aria-expanded={expanded}
+          onClick={() => setShowBio(!showBio)}
+          className="mt-6 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors inline-flex items-center justify-center gap-1.5 mx-auto"
         >
-          {expanded
-            ? t(language, "Read less", "قراءة أقل")
-            : t(language, "Read bio", "اقرأ السيرة الذاتية")}
-          <svg 
-            className={cn(
-              "w-4 h-4 transition-transform duration-300",
-              expanded ? "rotate-180" : "group-hover:translate-y-0.5"
-            )} 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
+          {showBio
+            ? t(language, "Show Quote", "عرض الاقتباس")
+            : t(language, "Read Bio", "اقرأ السيرة الذاتية")}
         </button>
       </div>
     </article>
