@@ -12,7 +12,7 @@ export async function Footer() {
   return (
     <footer className="border-t border-border bg-card/30 backdrop-blur-sm mt-20">
       <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 mb-8">
           <div className={`md:col-span-2 ${textAlign}`}>
             <h3 className="text-xl font-semibold mb-3 tracking-wide text-primary">SNP</h3>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-sm mb-6">
@@ -52,6 +52,30 @@ export async function Footer() {
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
                   {t(language, "History", "التاريخ")}
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className={textAlign}>
+            <h4 className="text-sm font-semibold mb-4 tracking-wide text-foreground">
+              {t(language, "Company", "الشركة")}
+            </h4>
+            <ul className="space-y-2.5">
+              <li>
+                <Link
+                  href="/about-us"
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {t(language, "About Us", "من نحن")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {t(language, "Contact", "تواصل معنا")}
                 </Link>
               </li>
             </ul>

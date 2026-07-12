@@ -1,7 +1,8 @@
+import { AboutUs } from "@/components/about/AboutUs";
+import { aboutUsMetadata } from "@/lib/seo/about-metadata";
+
+export const metadata = aboutUsMetadata;
+
 export default function AboutUsPage() {
-  return (
-    <div className="container py-16">
-      <h1 className="text-3xl font-semibold">About Us</h1>
-    </div>
-  );
+  return <AboutUs />;
 }

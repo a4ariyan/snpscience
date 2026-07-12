@@ -100,16 +100,16 @@ export async function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
-                href="/library"
+                href="/about-us"
                 className="inline-flex items-center justify-center px-6 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
               >
-                {t(language, "Explore Library", "استكشف المكتبة")}
+                {t(language, "Meet Our Team", "تعرّف على فريقنا")}
               </Link>
               <Link
-                href="/lab/studies"
+                href="/library"
                 className="inline-flex items-center justify-center px-6 py-2.5 rounded-lg border border-border bg-background hover:bg-accent transition-colors text-sm font-medium"
               >
-                {t(language, "Our Studies", "دراساتنا")}
+                {t(language, "Explore Library", "استكشف المكتبة")}
               </Link>
             </div>
           </div>
