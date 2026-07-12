@@ -36,27 +36,30 @@ export function TeamMemberCard({ member, language, isHighlighted = false }: Team
   const name = t(language, member.name, member.nameAr);
   const role = t(language, member.role, member.roleAr);
 
-  // Auto-scroll to highlighted card on load
+  // Smooth auto-scroll to highlighted card on load
   useEffect(() => {
     if (isHighlighted && cardRef.current) {
+      // Use requestAnimationFrame for smoother timing after initial layout
       const timer = setTimeout(() => {
-        // Find the element's position relative to the viewport
-        const rect = cardRef.current?.getBoundingClientRect();
-        if (rect) {
-          // Calculate if it's already fully visible in the center-ish area
-          const isVisible = rect.top >= 100 && rect.bottom <= window.innerHeight;
-          
-          if (!isVisible) {
-            // Calculate a scroll position that centers the card, accounting for the sticky header (~80px)
-            const scrollTop = window.scrollY || document.documentElement.scrollTop;
-            const targetY = scrollTop + rect.top - (window.innerHeight / 2) + (rect.height / 2);
-            window.scrollTo({
-              top: targetY,
-              behavior: 'smooth'
-            });
+        requestAnimationFrame(() => {
+          const rect = cardRef.current?.getBoundingClientRect();
+          if (rect) {
+            // Check if card is visibly centered (between 100px from top and bottom)
+            const isVisible = rect.top >= 100 && rect.bottom <= window.innerHeight;
+            
+            if (!isVisible) {
+              const scrollTop = window.scrollY || document.documentElement.scrollTop;
+              const targetY = scrollTop + rect.top - (window.innerHeight / 2) + (rect.height / 2);
+              
+              window.scrollTo({
+                top: targetY,
+                behavior: 'smooth'
+              });
+            }
           }
-        }
-      }, 500); // 500ms delay ensures animations and layout settle first
+        });
+      }, 700); // Slightly longer delay to let hero blur animation clear up CPU
+      
       return () => clearTimeout(timer);
     }
   }, [isHighlighted]);
