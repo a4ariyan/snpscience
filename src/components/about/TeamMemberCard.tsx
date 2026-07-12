@@ -38,47 +38,53 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
       initial="rest"
       whileHover="hover"
       animate="rest"
-      className="group relative flex flex-col items-center text-center rounded-3xl border border-border/40 bg-card p-6 sm:p-8 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 overflow-hidden"
+      className="group relative flex flex-col items-start text-start rounded-3xl border border-border/40 bg-card p-6 sm:p-8 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 overflow-hidden"
       itemScope 
       itemType="https://schema.org/Person"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-      <div
-        className={cn(
-          "relative mb-4 flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-2xl font-light text-white shadow-inner",
-          member.accent
-        )}
-        aria-hidden
-      >
-        {member.initials}
-        <div className="absolute inset-0 rounded-full bg-primary/10 mix-blend-overlay" />
+      {/* Header: Left-aligned Avatar + Info */}
+      <div className="flex flex-row items-center gap-5 w-full z-10">
+        <div
+          className={cn(
+            "relative flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-xl sm:text-2xl font-light text-white shadow-inner",
+            member.accent
+          )}
+          aria-hidden
+        >
+          {member.initials}
+          <div className="absolute inset-0 rounded-2xl bg-primary/10 mix-blend-overlay" />
+        </div>
+
+        <div className="flex flex-col items-start">
+          <h2 className="text-lg sm:text-xl font-medium text-foreground tracking-tight" itemProp="name">
+            {name}
+          </h2>
+          <p className="mt-0.5 text-xs sm:text-sm text-primary tracking-wide" itemProp="jobTitle">
+            {role}
+          </p>
+
+          {member.linkedin && (
+            <a
+              href={member.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 text-muted-foreground hover:text-primary transition-colors"
+              aria-label={`${name} on LinkedIn`}
+              itemProp="sameAs"
+            >
+              <LinkedInIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+            </a>
+          )}
+        </div>
       </div>
 
-      <h2 className="text-lg sm:text-xl font-medium text-foreground tracking-tight z-10" itemProp="name">
-        {name}
-      </h2>
-      <p className="mt-1 text-xs sm:text-sm text-primary tracking-wide z-10" itemProp="jobTitle">
-        {role}
-      </p>
+      <div className="w-full h-px bg-border my-6 z-10 shrink-0 opacity-60" aria-hidden />
 
-      {member.linkedin && (
-        <a
-          href={member.linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-3 text-muted-foreground hover:text-primary transition-colors z-10"
-          aria-label={`${name} on LinkedIn`}
-          itemProp="sameAs"
-        >
-          <LinkedInIcon className="h-5 w-5" />
-        </a>
-      )}
-
-      <div className="w-8 h-px bg-border my-5 z-10 shrink-0" aria-hidden />
-
+      {/* Content */}
       <div className="flex-1 w-full flex flex-col justify-between z-10">
-        <div className="relative min-h-[90px] flex items-center justify-center px-1">
+        <div className="relative min-h-[90px] flex items-start justify-start">
           <p 
             key={showBio ? "bio" : "quote"}
             className="text-sm leading-relaxed text-muted-foreground animate-in fade-in zoom-in-95 duration-300"
@@ -88,23 +94,25 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
             ) : (
               <span className="relative inline-block">
                 <span className="relative z-10 italic text-foreground/80">&ldquo;{quote}&rdquo;</span>
+                {/* Minimal Zigzag Hover Animation */}
                 <motion.svg
                   variants={{
                     rest: { pathLength: 0, opacity: 0 },
                     hover: { pathLength: 1, opacity: 1 }
                   }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                  className="absolute -bottom-2 left-0 w-full h-5 -z-10 text-primary pointer-events-none opacity-50"
+                  transition={{ duration: 0.7, ease: "easeOut" }}
+                  className="absolute -bottom-1 left-0 w-full h-3 -z-10 text-primary pointer-events-none opacity-40"
                   viewBox="0 0 100 20"
                   preserveAspectRatio="none"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M -2,12 Q 25,18 50,12 T 102,12"
+                    d="M 0,10 L 4,16 L 12,4 L 20,16 L 28,4 L 36,16 L 44,4 L 52,16 L 60,4 L 68,16 L 76,4 L 84,16 L 92,4 L 100,10"
                     stroke="currentColor"
-                    strokeWidth="3"
+                    strokeWidth="1.5"
                     strokeLinecap="round"
+                    strokeLinejoin="round"
                     vectorEffect="non-scaling-stroke"
                   />
                 </motion.svg>
@@ -116,7 +124,7 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
         <button
           type="button"
           onClick={() => setShowBio(!showBio)}
-          className="mt-5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors inline-flex items-center justify-center gap-1.5 mx-auto shrink-0"
+          className="mt-6 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors inline-flex items-center justify-start gap-1.5 shrink-0"
         >
           {showBio
             ? t(language, "Show less", "عرض أقل")
