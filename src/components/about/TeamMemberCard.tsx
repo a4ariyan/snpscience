@@ -34,10 +34,14 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
   const role = t(language, member.role, member.roleAr);
 
   return (
-    <article className="flex flex-col items-center text-center rounded-2xl border border-border bg-card p-8 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300">
+    <article 
+      className="flex flex-col items-center text-center rounded-2xl border border-border/50 bg-card p-8 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+      itemScope 
+      itemType="https://schema.org/Person"
+    >
       <div
         className={cn(
-          "relative mb-6 flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br text-2xl font-semibold text-white shadow-inner",
+          "relative mb-5 flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br text-3xl font-light text-white shadow-inner",
           member.accent
         )}
         aria-hidden
@@ -46,40 +50,70 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
         <div className="absolute inset-0 rounded-full bg-primary/10 mix-blend-overlay" />
       </div>
 
-      <h3 className="text-base font-semibold text-foreground tracking-tight">
-        {motto}
-      </h3>
+      <h2 className="text-xl font-semibold text-foreground tracking-tight" itemProp="name">
+        {name}
+      </h2>
+      <p className="mt-1.5 text-sm font-medium text-primary tracking-wide uppercase" itemProp="jobTitle">
+        {role}
+      </p>
 
-      <blockquote className="mt-4 text-sm leading-relaxed text-muted-foreground">
-        &ldquo;{expanded ? bio : quote}&rdquo;
-      </blockquote>
+      {member.linkedin && (
+        <a
+          href={member.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
+          aria-label={`${name} on LinkedIn`}
+          itemProp="sameAs"
+        >
+          <LinkedInIcon className="h-5 w-5" />
+        </a>
+      )}
 
-      <button
-        type="button"
-        onClick={() => setExpanded(!expanded)}
-        className="mt-3 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-        aria-expanded={expanded}
-      >
-        {expanded
-          ? t(language, "Show less", "عرض أقل")
-          : t(language, "Read more", "اقرأ المزيد")}
-      </button>
+      <div className="mt-6 w-full pt-6 border-t border-border/60 flex-1 flex flex-col">
+        <div className="flex-1">
+          <h3 className="text-sm font-semibold text-foreground mb-3">
+            {motto}
+          </h3>
+          <blockquote className="text-sm leading-relaxed text-muted-foreground italic">
+            &ldquo;{quote}&rdquo;
+          </blockquote>
+        </div>
 
-      <div className="mt-6 w-full pt-6 border-t border-border/60">
-        <p className="text-lg font-semibold text-foreground">{name}</p>
-        <p className="mt-1 text-sm text-muted-foreground">{role}</p>
+        <div 
+          className={cn(
+            "grid transition-all duration-300 ease-in-out mt-4",
+            expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+          )}
+        >
+          <div className="overflow-hidden">
+            <p className="text-sm leading-relaxed text-muted-foreground text-left pb-4 border-t border-border/40 pt-4 mt-2">
+              {bio}
+            </p>
+          </div>
+        </div>
 
-        {member.linkedin && (
-          <a
-            href={member.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 inline-flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
-            aria-label={`${name} on LinkedIn`}
+        <button
+          type="button"
+          onClick={() => setExpanded(!expanded)}
+          className="mt-2 text-sm font-medium text-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5 justify-center group"
+          aria-expanded={expanded}
+        >
+          {expanded
+            ? t(language, "Read less", "قراءة أقل")
+            : t(language, "Read bio", "اقرأ السيرة الذاتية")}
+          <svg 
+            className={cn(
+              "w-4 h-4 transition-transform duration-300",
+              expanded ? "rotate-180" : "group-hover:translate-y-0.5"
+            )} 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor"
           >
-            <LinkedInIcon className="h-4 w-4" />
-          </a>
-        )}
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
       </div>
     </article>
   );

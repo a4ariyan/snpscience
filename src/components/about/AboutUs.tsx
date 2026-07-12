@@ -1,18 +1,15 @@
 import { PublicPage } from "@/components/layouts/PublicPage";
 import { TeamMemberCard } from "@/components/about/TeamMemberCard";
 import { getServerLanguage } from "@/lib/language.server";
-import { t } from "@/lib/i18n";
 import {
   aboutQuote,
-  peopleSection,
   teamMembers,
 } from "@/shared/about-content";
 import {
   buildAboutBreadcrumbJsonLd,
   buildAboutJsonLd,
 } from "@/lib/seo/about-metadata";
-import { ScribbleUnderline, ScribbleCircle, ScribbleSparkle } from "@/components/ui/Scribbles";
-import { motion } from "framer-motion";
+import { AboutHeroQuote } from "@/components/about/AboutHeroQuote";
 
 export async function AboutUs() {
   const language = await getServerLanguage();
@@ -30,44 +27,12 @@ export async function AboutUs() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      {/* Hero Quote */}
-      <section className="pt-20 pb-12 md:pt-28 md:pb-16 lg:pt-32 lg:pb-20 overflow-hidden">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, filter: "blur(12px)", y: 15 }}
-            whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-            className="relative inline-block"
-          >
-            <ScribbleSparkle className="w-10 h-10 md:w-14 md:h-14 -top-8 -left-6 md:-top-12 md:-left-12 opacity-60" delay={0.8} />
-            <ScribbleSparkle className="w-6 h-6 md:w-8 md:h-8 -bottom-4 -right-4 md:-bottom-6 md:-right-8 opacity-40" delay={1.1} />
-            
-            <h1
-              className={`text-xl sm:text-2xl md:text-3xl lg:text-[2rem] font-normal leading-relaxed md:leading-relaxed text-foreground tracking-tight ${
-                language === "ar" ? "font-arabic-serif" : "font-serif-display"
-              }`}
-            >
-              {language === "en" ? (
-                <>
-                  “Research on Natural Science. At SNP, we are dedicated to advancing genomics through{" "}
-                  <ScribbleUnderline>open research</ScribbleUnderline> and rigorous data. We believe in open science, global collaboration, and providing researchers with the <ScribbleCircle>tools</ScribbleCircle> they need to decode the fundamental building blocks of life.”
-                </>
-              ) : (
-                <>
-                  “البحث في العلوم الطبيعية. في SNP، نكرس جهودنا لتطوير علم الجينوم من خلال{" "}
-                  <ScribbleUnderline>البحث المفتوح</ScribbleUnderline> والبيانات الدقيقة. نحن نؤمن بالعلم المفتوح والتعاون العالمي وتزويد الباحثين <ScribbleCircle>بالأدوات</ScribbleCircle> التي يحتاجونها لفك شفرة اللبنات الأساسية للحياة.”
-                </>
-              )}
-            </h1>
-          </motion.div>
-        </div>
-      </section>
+      <AboutHeroQuote language={language} quoteAr={aboutQuote.textAr} />
 
       {/* Our People List */}
       <section className="pb-24 lg:pb-32" aria-labelledby="our-people-heading">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 mt-4">
             {teamMembers.map((member) => (
               <TeamMemberCard
                 key={member.id}
