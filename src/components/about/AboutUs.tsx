@@ -11,7 +11,11 @@ import {
 } from "@/lib/seo/about-metadata";
 import { AboutHeroQuote } from "@/components/about/AboutHeroQuote";
 
-export async function AboutUs() {
+interface AboutUsProps {
+  highlightedMemberId?: string;
+}
+
+export async function AboutUs({ highlightedMemberId }: AboutUsProps) {
   const language = await getServerLanguage();
   const jsonLd = buildAboutJsonLd();
   const breadcrumbJsonLd = buildAboutBreadcrumbJsonLd();
@@ -38,6 +42,7 @@ export async function AboutUs() {
                 key={member.id}
                 member={member}
                 language={language}
+                isHighlighted={highlightedMemberId === member.id}
               />
             ))}
           </div>

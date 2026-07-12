@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import type { TeamMember } from "@/shared/about-content";
 import type { Language } from "@/shared/language";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { MarkerHighlight } from "@/components/ui/Scribbles";
 
 function LinkedInIcon({ className }: { className?: string }) {
   return (
@@ -23,25 +24,59 @@ function LinkedInIcon({ className }: { className?: string }) {
 interface TeamMemberCardProps {
   member: TeamMember;
   language: Language;
+  isHighlighted?: boolean;
 }
 
-export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
+export function TeamMemberCard({ member, language, isHighlighted = false }: TeamMemberCardProps) {
   const [showBio, setShowBio] = useState(false);
+  const cardRef = useRef<HTMLElement>(null);
 
   const quote = t(language, member.quote, member.quoteAr);
   const bio = t(language, member.bio, member.bioAr);
   const name = t(language, member.name, member.nameAr);
   const role = t(language, member.role, member.roleAr);
 
+  // Auto-scroll to highlighted card on load
+  useEffect(() => {
+    if (isHighlighted && cardRef.current) {
+      const timer = setTimeout(() => {
+        // Find the element's position relative to the viewport
+        const rect = cardRef.current?.getBoundingClientRect();
+        if (rect) {
+          // Calculate if it's already fully visible in the center-ish area
+          const isVisible = rect.top >= 100 && rect.bottom <= window.innerHeight;
+          
+          if (!isVisible) {
+            // Calculate a scroll position that centers the card, accounting for the sticky header (~80px)
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const targetY = scrollTop + rect.top - (window.innerHeight / 2) + (rect.height / 2);
+            window.scrollTo({
+              top: targetY,
+              behavior: 'smooth'
+            });
+          }
+        }
+      }, 500); // 500ms delay ensures animations and layout settle first
+      return () => clearTimeout(timer);
+    }
+  }, [isHighlighted]);
+
   return (
     <motion.article 
+      ref={cardRef}
       initial="rest"
       whileHover="hover"
       animate="rest"
-      className="group relative flex flex-col items-center text-center rounded-3xl border border-border/40 bg-card p-6 sm:p-8 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 overflow-hidden"
+      className={cn(
+        "group relative flex flex-col items-center text-center rounded-3xl border bg-card p-6 sm:p-8 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 overflow-hidden",
+        isHighlighted ? "border-primary shadow-primary/20 shadow-lg" : "border-border/40"
+      )}
       itemScope 
       itemType="https://schema.org/Person"
     >
+      {isHighlighted && (
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary via-primary/50 to-primary" />
+      )}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
       <div
@@ -55,9 +90,11 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
         <div className="absolute inset-0 rounded-full bg-primary/10 mix-blend-overlay" />
       </div>
 
-      <h2 className="text-lg sm:text-xl font-medium text-foreground tracking-tight z-10" itemProp="name">
-        {name}
-      </h2>
+      <MarkerHighlight active={isHighlighted} delay={1.2}>
+        <h2 className="text-lg sm:text-xl font-medium text-foreground tracking-tight z-10 relative inline-block" itemProp="name">
+          {name}
+        </h2>
+      </MarkerHighlight>
       <p className="mt-1 text-xs sm:text-sm text-primary tracking-wide z-10" itemProp="jobTitle">
         {role}
       </p>

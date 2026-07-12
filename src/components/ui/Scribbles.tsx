@@ -60,6 +60,33 @@ export function ScribbleSparkle({
   );
 }
 
+export function MarkerHighlight({
+  children,
+  className,
+  active = true,
+  delay = 0.2,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  active?: boolean;
+  delay?: number;
+}) {
+  return (
+    <span className={`relative inline-block ${className || ""}`}>
+      <span className="relative z-10">{children}</span>
+      {active && (
+        <motion.span
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay }}
+          className="absolute -bottom-0.5 -top-0.5 -left-1 -right-1 z-0 bg-primary/25 rounded-sm origin-left -rotate-1 pointer-events-none"
+        />
+      )}
+    </span>
+  );
+}
+
 export function ScribbleCircle({
   children,
   className,

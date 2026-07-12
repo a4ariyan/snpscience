@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ScribbleUnderline, ScribbleSparkle } from "@/components/ui/Scribbles";
+import { ScribbleUnderline, ScribbleSparkle, MarkerHighlight } from "@/components/ui/Scribbles";
 import type { Language } from "@/shared/language";
 
 interface AboutHeroQuoteProps {
@@ -36,12 +36,12 @@ export function AboutHeroQuote({ language, quoteAr }: AboutHeroQuoteProps) {
           >
             {language === "en" ? (
               <>
-                “Research on Natural Science. At SNP, we are dedicated to advancing genomics through{" "}
+                “Research on <MarkerHighlight active delay={1.4}>Natural Science</MarkerHighlight>. At SNP, we are dedicated to advancing genomics through{" "}
                 <ScribbleUnderline>open research</ScribbleUnderline> and rigorous data. We believe in open science, global collaboration, and providing researchers with the tools they need to decode the fundamental building blocks of life.”
               </>
             ) : (
               <>
-                “البحث في العلوم الطبيعية. في SNP، نكرس جهودنا لتطوير علم الجينوم من خلال{" "}
+                “البحث في <MarkerHighlight active delay={1.4}>العلوم الطبيعية</MarkerHighlight>. في SNP، نكرس جهودنا لتطوير علم الجينوم من خلال{" "}
                 <ScribbleUnderline>البحث المفتوح</ScribbleUnderline> والبيانات الدقيقة. نحن نؤمن بالعلم المفتوح والتعاون العالمي وتزويد الباحثين بالأدوات التي يحتاجونها لفك شفرة اللبنات الأساسية للحياة.”
               </>
             )}
