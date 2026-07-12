@@ -93,10 +93,10 @@ export function ClientHeader({ user, isAdmin }: ClientHeaderProps) {
       href: "/products",
     },
     {
-      id: "about",
+      id: "our-people",
       labelEn: "Our People",
       labelAr: "فريقنا",
-      href: "/about-us",
+      href: "/our-people",
     },
   ];
 

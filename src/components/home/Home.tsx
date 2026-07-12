@@ -100,7 +100,7 @@ export async function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
-                href="/about-us"
+                href="/our-people"
                 className="inline-flex items-center justify-center px-6 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
               >
                 {t(language, "Meet Our Team", "تعرّف على فريقنا")}

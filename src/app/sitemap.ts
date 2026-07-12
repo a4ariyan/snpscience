@@ -5,7 +5,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://snpscience.com";
 
 const staticRoutes = [
   "",
-  "/about-us",
+  "/our-people",
   "/contact",
   "/library",
   "/library/population-genomics",

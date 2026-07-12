@@ -6,9 +6,9 @@ import {
   teamMembers,
 } from "@/shared/about-content";
 import {
-  buildAboutBreadcrumbJsonLd,
-  buildAboutJsonLd,
-} from "@/lib/seo/about-metadata";
+  buildOurPeopleBreadcrumbJsonLd,
+  buildOurPeopleJsonLd,
+} from "@/lib/seo/our-people-metadata";
 import { AboutHeroQuote } from "@/components/about/AboutHeroQuote";
 
 interface AboutUsProps {
@@ -17,8 +17,8 @@ interface AboutUsProps {
 
 export async function AboutUs({ highlightedMemberId }: AboutUsProps) {
   const language = await getServerLanguage();
-  const jsonLd = buildAboutJsonLd();
-  const breadcrumbJsonLd = buildAboutBreadcrumbJsonLd();
+  const jsonLd = buildOurPeopleJsonLd();
+  const breadcrumbJsonLd = buildOurPeopleBreadcrumbJsonLd();
 
   return (
     <PublicPage>

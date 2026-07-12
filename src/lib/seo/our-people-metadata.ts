@@ -7,7 +7,7 @@ export const siteUrl =
 const description =
   "Meet the SNP Science team. We advance genomics research through open science, rigorous data, and a global community of researchers based in the UAE.";
 
-export const aboutUsMetadata: Metadata = {
+export const ourPeopleMetadata: Metadata = {
   title: "Our People",
   description,
   keywords: [
@@ -18,12 +18,12 @@ export const aboutUsMetadata: Metadata = {
     "open science genomics",
     "SNP Science leadership",
   ],
-  alternates: { canonical: "/about-us" },
+  alternates: { canonical: "/our-people" },
   robots: { index: true, follow: true },
   openGraph: {
     title: "Our People | SNP",
     description,
-    url: `${siteUrl}/about-us`,
+    url: `${siteUrl}/our-people`,
     siteName: "SNP | Research on Natural Science",
     type: "website",
   },
@@ -34,13 +34,13 @@ export const aboutUsMetadata: Metadata = {
   },
 };
 
-export function buildAboutJsonLd(): Record<string, unknown> {
+export function buildOurPeopleJsonLd(): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "AboutPage",
-    name: "About SNP Science",
+    name: "Our People | SNP",
     description,
-    url: `${siteUrl}/about-us`,
+    url: `${siteUrl}/our-people`,
     mainEntity: {
       "@type": "Organization",
       name: "SNP Science",
@@ -57,7 +57,7 @@ export function buildAboutJsonLd(): Record<string, unknown> {
   };
 }
 
-export function buildAboutBreadcrumbJsonLd(): Record<string, unknown> {
+export function buildOurPeopleBreadcrumbJsonLd(): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -72,7 +72,7 @@ export function buildAboutBreadcrumbJsonLd(): Record<string, unknown> {
         "@type": "ListItem",
         position: 2,
         name: "Our People",
-        item: `${siteUrl}/about-us`,
+        item: `${siteUrl}/our-people`,
       },
     ],
   };

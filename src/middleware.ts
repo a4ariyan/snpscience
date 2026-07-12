@@ -7,13 +7,13 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
-  // Check for team member vanity URLs (e.g. /omarhassan -> /about-us/omarhassan)
+  // Check for team member vanity URLs (e.g. /omarhassan -> /our-people/omarhassan)
   if (
     pathname !== "/" && 
     !pathname.startsWith("/_next") && 
     !pathname.startsWith("/api") && 
     !pathname.startsWith("/admin") &&
-    !pathname.startsWith("/about-us")
+    !pathname.startsWith("/our-people")
   ) {
     // Only check root-level paths for vanity URLs
     const segments = pathname.split("/").filter(Boolean);
@@ -30,7 +30,7 @@ export async function middleware(request: NextRequest) {
 
         if (isMember) {
           const url = request.nextUrl.clone();
-          url.pathname = `/about-us/${segments[0]}`;
+          url.pathname = `/our-people/${segments[0]}`;
           return NextResponse.redirect(url);
         }
       }

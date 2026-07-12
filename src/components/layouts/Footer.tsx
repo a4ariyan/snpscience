@@ -64,10 +64,10 @@ export async function Footer() {
             <ul className="space-y-2.5">
               <li>
                 <Link
-                  href="/about-us"
+                  href="/our-people"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
-                  {t(language, "About Us", "من نحن")}
+                  {t(language, "Our People", "فريقنا")}
                 </Link>
               </li>
               <li>
