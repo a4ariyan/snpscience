@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import type { TeamMember } from "@/shared/about-content";
 import type { Language } from "@/shared/language";
 import { t } from "@/lib/i18n";
@@ -33,14 +34,19 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
   const role = t(language, member.role, member.roleAr);
 
   return (
-    <article 
-      className="flex flex-col items-center text-center rounded-3xl border border-border/40 bg-card p-8 sm:p-10 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+    <motion.article 
+      initial="rest"
+      whileHover="hover"
+      animate="rest"
+      className="group relative flex flex-col items-center text-center rounded-3xl border border-border/40 bg-card p-6 sm:p-8 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 overflow-hidden"
       itemScope 
       itemType="https://schema.org/Person"
     >
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
       <div
         className={cn(
-          "relative mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br text-3xl font-light text-white shadow-inner",
+          "relative mb-4 flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-2xl font-light text-white shadow-inner",
           member.accent
         )}
         aria-hidden
@@ -49,10 +55,10 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
         <div className="absolute inset-0 rounded-full bg-primary/10 mix-blend-overlay" />
       </div>
 
-      <h2 className="text-xl font-medium text-foreground tracking-tight" itemProp="name">
+      <h2 className="text-lg sm:text-xl font-medium text-foreground tracking-tight z-10" itemProp="name">
         {name}
       </h2>
-      <p className="mt-1.5 text-sm text-primary tracking-wide" itemProp="jobTitle">
+      <p className="mt-1 text-xs sm:text-sm text-primary tracking-wide z-10" itemProp="jobTitle">
         {role}
       </p>
 
@@ -61,7 +67,7 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
           href={member.linkedin}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 text-muted-foreground hover:text-primary transition-colors"
+          className="mt-3 text-muted-foreground hover:text-primary transition-colors z-10"
           aria-label={`${name} on LinkedIn`}
           itemProp="sameAs"
         >
@@ -69,18 +75,40 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
         </a>
       )}
 
-      <div className="w-10 h-px bg-border my-6" aria-hidden />
+      <div className="w-8 h-px bg-border my-5 z-10 shrink-0" aria-hidden />
 
-      <div className="flex-1 w-full flex flex-col justify-between">
-        <div className="relative min-h-[140px] flex items-center justify-center">
+      <div className="flex-1 w-full flex flex-col justify-between z-10">
+        <div className="relative min-h-[90px] flex items-center justify-center px-1">
           <p 
             key={showBio ? "bio" : "quote"}
-            className="text-sm leading-relaxed text-muted-foreground animate-in fade-in slide-in-from-bottom-2 duration-300"
+            className="text-sm leading-relaxed text-muted-foreground animate-in fade-in zoom-in-95 duration-300"
           >
             {showBio ? (
               bio
             ) : (
-              <span className="italic">&ldquo;{quote}&rdquo;</span>
+              <span className="relative inline-block">
+                <span className="relative z-10 italic text-foreground/80">&ldquo;{quote}&rdquo;</span>
+                <motion.svg
+                  variants={{
+                    rest: { pathLength: 0, opacity: 0 },
+                    hover: { pathLength: 1, opacity: 1 }
+                  }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                  className="absolute -bottom-2 left-0 w-full h-5 -z-10 text-primary pointer-events-none opacity-50"
+                  viewBox="0 0 100 20"
+                  preserveAspectRatio="none"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M -2,12 Q 25,18 50,12 T 102,12"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                </motion.svg>
+              </span>
             )}
           </p>
         </div>
@@ -88,13 +116,13 @@ export function TeamMemberCard({ member, language }: TeamMemberCardProps) {
         <button
           type="button"
           onClick={() => setShowBio(!showBio)}
-          className="mt-6 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors inline-flex items-center justify-center gap-1.5 mx-auto"
+          className="mt-5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors inline-flex items-center justify-center gap-1.5 mx-auto shrink-0"
         >
           {showBio
-            ? t(language, "Show Quote", "عرض الاقتباس")
-            : t(language, "Read Bio", "اقرأ السيرة الذاتية")}
+            ? t(language, "Show less", "عرض أقل")
+            : t(language, "Read more", "اقرأ المزيد")}
         </button>
       </div>
-    </article>
+    </motion.article>
   );
 }
