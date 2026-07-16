@@ -58,7 +58,7 @@ export function ScribbleSparkle({
       <path d="M25,5 Q25,25 5,25 Q25,25 25,45 Q25,25 45,25 Q25,25 25,5 Z" />
     </motion.svg>
   );
-}
+} 
 
 export function MarkerHighlight({
   children,
